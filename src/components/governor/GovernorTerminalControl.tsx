@@ -534,7 +534,7 @@ const GovernorTerminalControl = () => {
           {/* Terminal screen */}
           <div 
             ref={terminalRef}
-            className="relative h-64 sm:h-96 overflow-y-auto font-mono text-xs sm:text-sm p-3 bg-white border-2"
+            className="relative h-64 sm:h-96 overflow-y-auto font-mono text-xs sm:text-sm p-3 bg-white border-2 overflow-x-hidden"
             style={{
               borderTopColor: '#808080',
               borderLeftColor: '#808080',
@@ -543,16 +543,26 @@ const GovernorTerminalControl = () => {
               zIndex: 2
             }}
           >
-            {/* Static Interactive Brokers Logo Background - Fixed to terminal viewport */}
+            {/* Static Interactive Brokers Logo Background - Fixed to terminal container */}
             <div 
-              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-              style={{ zIndex: 1 }}
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ 
+                zIndex: 1,
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
             >
               <img 
                 src="/Screenshot 2025-06-07 024813.png" 
                 alt="Interactive Brokers" 
                 className="h-6 sm:h-8 w-auto object-contain"
-                style={{ opacity: 0.5 }}
+                style={{ 
+                  opacity: 0.3,
+                  position: 'fixed',
+                  pointerEvents: 'none'
+                }}
               />
             </div>
             
