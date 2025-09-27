@@ -68,7 +68,7 @@ const GovernorTerminalControl = () => {
     // Simulate processing delay
     await new Promise(resolve => setTimeout(resolve, 200));
     
-    switch (cmd) {
+    switch (args[0]) { // Check the first word of the command
       case 'help':
         addToHistory('');
         addToHistory('AVAILABLE COMMANDS:');
@@ -167,7 +167,7 @@ const GovernorTerminalControl = () => {
         addToHistory('');
         break;
 
-      case 'list':
+      case 'list': // This case will now be hit for "list investors"
         if (args[1] === 'investors') {
           addToHistory('');
           addToHistory('INVESTOR ACCOUNTS:');
@@ -185,7 +185,7 @@ const GovernorTerminalControl = () => {
           addToHistory('ERROR: Usage: list investors');
         }
         break;
-
+      
       case 'delete':
         if (args.length < 2) {
           addToHistory('ERROR: Usage: delete <investor_name>');
@@ -518,7 +518,7 @@ const GovernorTerminalControl = () => {
         break;
 
       default:
-        // Handle multi-word commands
+        // These multi-word commands are handled by startsWith, so they remain in default
         if (cmd.startsWith('restrict ')) {
           const restrictArgs = command.split(' ');
           if (restrictArgs.length < 2) {
