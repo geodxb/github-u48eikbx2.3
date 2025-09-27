@@ -40,39 +40,39 @@ const WithdrawalFlagModal = ({
   const flagTypes = [
     { 
       id: 'urgent', 
-      label: 'URGENT PROCESSING', 
+      label: 'URGENT PRIORITY', 
       icon: <AlertTriangle size={16} />, 
       color: 'text-red-600',
       bgColor: 'bg-red-50',
       borderColor: 'border-red-200',
-      description: 'Mark for immediate attention and priority processing'
+      description: 'Request immediate attention and priority processing'
     },
     { 
       id: 'suspicious', 
-      label: 'SUSPICIOUS ACTIVITY', 
+      label: 'SUSPICIOUS REVIEW', 
       icon: <Eye size={16} />, 
       color: 'text-amber-600',
       bgColor: 'bg-amber-50',
       borderColor: 'border-amber-200',
-      description: 'Flag for potential fraudulent or suspicious behavior'
+      description: 'Request review for potential suspicious behavior'
     },
     { 
       id: 'high_amount', 
-      label: 'HIGH AMOUNT', 
+      label: 'HIGH AMOUNT REVIEW', 
       icon: <FileText size={16} />, 
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
       borderColor: 'border-purple-200',
-      description: 'Large withdrawal requiring additional oversight'
+      description: 'Request additional oversight for large withdrawal'
     },
     { 
       id: 'documentation_required', 
-      label: 'DOCUMENTATION REQUIRED', 
+      label: 'DOCUMENTATION REQUEST', 
       icon: <FileText size={16} />, 
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
       borderColor: 'border-blue-200',
-      description: 'Additional documentation needed before processing'
+      description: 'Request additional documentation before processing'
     },
     { 
       id: 'compliance_review', 
@@ -81,7 +81,7 @@ const WithdrawalFlagModal = ({
       color: 'text-indigo-600',
       bgColor: 'bg-indigo-50',
       borderColor: 'border-indigo-200',
-      description: 'Requires compliance team review and approval'
+      description: 'Request compliance team review and approval'
     }
   ];
 
@@ -142,13 +142,13 @@ const WithdrawalFlagModal = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="REQUEST WITHDRAWAL FLAG"
+      title="SUBMIT PRIORITY REQUEST"
       size="lg"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Withdrawal Information */}
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <h4 className="font-medium text-gray-800 mb-3 uppercase tracking-wide">FLAG REQUEST DETAILS</h4>
+          <h4 className="font-medium text-gray-800 mb-3 uppercase tracking-wide">PRIORITY REQUEST DETAILS</h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <p className="text-gray-600 font-medium uppercase tracking-wide">INVESTOR</p>
@@ -170,16 +170,16 @@ const WithdrawalFlagModal = ({
           
           <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-blue-800 text-sm font-medium uppercase tracking-wide">
-              <strong>IMPORTANT:</strong> This is a flag request that requires Governor approval before taking effect. 
-              Only pending and approved withdrawals can be flagged. The flag will only appear after Governor approval.
+              <strong>IMPORTANT:</strong> This is a priority request that requires Governor approval before taking effect. 
+              Only pending and approved withdrawals can be prioritized. The priority status will only appear after Governor approval.
             </p>
           </div>
         </div>
 
-        {/* Flag Type Selection */}
+        {/* Priority Type Selection */}
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
-            FLAG TYPE
+            PRIORITY TYPE
           </label>
           <div className="grid grid-cols-1 gap-3">
             {flagTypes.map((type) => (
@@ -237,18 +237,18 @@ const WithdrawalFlagModal = ({
         {/* Comment */}
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-            FLAG REQUEST REASON <span className="text-red-600">*</span>
+            PRIORITY REQUEST REASON <span className="text-red-600">*</span>
           </label>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-300 focus:border-gray-300 font-medium"
             rows={4}
-            placeholder="Explain why this withdrawal should be flagged (e.g., investor needs withdrawal urgently, suspicious activity detected, etc.)..."
+            placeholder="Explain why this withdrawal needs priority processing (e.g., investor needs withdrawal urgently, suspicious activity detected, etc.)..."
             required
           />
           <p className="text-xs text-gray-600 mt-1 uppercase tracking-wide">
-            This request will be reviewed by the Governor before the flag is applied
+            This request will be reviewed by the Governor before priority status is applied
           </p>
         </div>
 
@@ -279,7 +279,7 @@ const WithdrawalFlagModal = ({
             disabled={!comment.trim() || isLoading}
             className="flex-1"
           >
-            {isLoading ? 'SUBMITTING REQUEST...' : 'SUBMIT FLAG REQUEST'}
+            {isLoading ? 'SUBMITTING REQUEST...' : 'SUBMIT PRIORITY REQUEST'}
           </Button>
         </div>
       </form>

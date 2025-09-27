@@ -314,6 +314,22 @@ const WithdrawalsPage = () => {
               Track Progress
             </Button>
             
+            {/* Priority Request button for pending/approved withdrawals */}
+            {(row.status === 'Pending' || row.status === 'Approved') && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setSelectedFlagWithdrawal(row);
+                  setShowFlagModal(true);
+                }}
+                className="w-full mb-2 border-amber-300 text-amber-700 hover:bg-amber-50"
+              >
+                <Flag size={14} className="mr-1" />
+                Priority Request
+              </Button>
+            )}
+            
             {/* Proof of funds and transfer buttons for approved/credited withdrawals */}
             {(row.status === 'Approved' || row.status === 'Credited') && (
               <div className="space-y-1">
@@ -633,25 +649,31 @@ const WithdrawalsPage = () => {
                 </div>
               </div>
             </div>
-      <WithdrawalFlagModal
-        isOpen={showFlagModal}
-        onClose={() => {
-          setShowFlagModal(false);
-          setSelectedFlagWithdrawal(null);
-        }}
-        withdrawalId={selectedFlagWithdrawal?.id || ''}
-        withdrawalAmount={selectedFlagWithdrawal?.amount || 0}
-        investorName={selectedFlagWithdrawal?.investorName || ''}
-        onSuccess={() => {
-          setShowFlagModal(false);
-          setSelectedFlagWithdrawal(null);
-          refetch(); // Refresh withdrawal requests to show updated flags
-        }}
-      />
+          </div>
+        </div>
+      )}
+
+      {showFlagModal && selectedFlagWithdrawal && (
+        <WithdrawalFlagModal
+          isOpen={showFlagModal}
+          onClose={() => {
+            setShowFlagModal(false);
+            setSelectedFlagWithdrawal(null);
+          }}
+          withdrawalId={selectedFlagWithdrawal.id}
+          withdrawalAmount={selectedFlagWithdrawal.amount}
+          investorName={selectedFlagWithdrawal.investorName}
+          onSuccess={() => {
+            setShowFlagModal(false);
+            setSelectedFlagWithdrawal(null);
+            refetch(); // Refresh withdrawal requests to show updated flags
+          }}
+        />
+      )}
 
       {/* Proof of Transfer Modal */}
       <Modal
-        isOpen={showProofOfTransfer}
+        isOpen={showFlagModal}
         onClose={() => {
           setShowProofOfTransfer(false);
           setSelectedTransferProof(null);

@@ -449,6 +449,19 @@ const InvestorProfile = () => {
                           </td>
                           <td className="px-6 py-4">
                             <div className="space-y-1">
+                              {/* Priority Request button for pending/approved withdrawals */}
+                              {(request.status === 'Pending' || request.status === 'Approved') && (
+                                <button
+                                  onClick={() => {
+                                    setSelectedFlagWithdrawal(request);
+                                    setShowFlagModal(true);
+                                  }}
+                                  className="block w-full px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded hover:bg-amber-200 transition-colors mb-1 border border-amber-300"
+                                >
+                                  <Flag size={12} className="mr-1 inline" />
+                                  Priority Request
+                                </button>
+                              )}
                               {request.withdrawalType === 'crypto' && request.cryptoWalletAddress && (
                                 <p className="text-xs text-gray-600">
                                   {request.cryptoCoinType}: {request.cryptoWalletAddress.slice(0, 10)}...{request.cryptoWalletAddress.slice(-6)}
@@ -848,21 +861,23 @@ const InvestorProfile = () => {
           {/* Real-time listeners will automatically update */}
       
       {/* Withdrawal Flag Modal */}
-      <WithdrawalFlagModal
-        isOpen={showFlagModal}
-        onClose={() => {
-          setShowFlagModal(false);
-          setSelectedFlagWithdrawal(null);
-        }}
-        withdrawalId={selectedFlagWithdrawal?.id || ''}
-        withdrawalAmount={selectedFlagWithdrawal?.amount || 0}
-        investorName={selectedFlagWithdrawal?.investorName || ''}
-        onSuccess={() => {
-          setShowFlagModal(false);
-          setSelectedFlagWithdrawal(null);
-          refetch(); // Refresh investor data to show updated flags
-        }}
-      />
+      {showFlagModal && selectedFlagWithdrawal && (
+        <WithdrawalFlagModal
+          isOpen={showFlagModal}
+          onClose={() => {
+            setShowFlagModal(false);
+            setSelectedFlagWithdrawal(null);
+          }}
+          withdrawalId={selectedFlagWithdrawal.id}
+          withdrawalAmount={selectedFlagWithdrawal.amount}
+          investorName={selectedFlagWithdrawal.investorName}
+          onSuccess={() => {
+            setShowFlagModal(false);
+            setSelectedFlagWithdrawal(null);
+            refetch(); // Refresh investor data to show updated flags
+          }}
+        />
+      )}
     </DashboardLayout>
   );
 };
