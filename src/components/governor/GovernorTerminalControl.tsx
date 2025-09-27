@@ -6,18 +6,10 @@ import { FirestoreService } from '../../services/firestoreService';
 import { AccountClosureService } from '../../services/accountClosureService';
 import { useInvestors } from '../../hooks/useFirestore';
 import { SystemSettings } from '../../types/user';
-import { AlertTriangle } from 'lucide-react';
-
-const GovernorTerminalControl = () => {
-  const { user } = useAuth();
+import { TriangleAlert as AlertTriangle } from 'lucide-react'onst { user } = useAuth();
   const navigate = useNavigate();
   const { investors } = useInvestors();
   const [input, setInput] = useState('');
-  const [showMoveBalanceModal, setShowMoveBalanceModal] = useState(false);
-  const [selectedInvestorForMove, setSelectedInvestorForMove] = useState<any>(null);
-  const [moveAmount, setMoveAmount] = useState('');
-  const [moveReason, setMoveReason] = useState('');
-  const [isMovingBalance, setIsMovingBalance] = useState(false);
   const [commandHistory, setCommandHistory] = useState<string[]>([
     'Interactive Brokers Governor Control Terminal v3.0.0',
     'Copyright (c) 2025 Interactive Brokers LLC',
@@ -92,9 +84,6 @@ const GovernorTerminalControl = () => {
         addToHistory('  wipe <name>     - Complete data wipe (irreversible)');
         addToHistory('  suspend <name>  - Suspend investor account');
         addToHistory('  activate <name> - Activate investor account');
-        addToHistory('');
-        addToHistory('BALANCE MANAGEMENT:');
-        addToHistory('  movebalance     - Transfer investor balance to admin commission');
         addToHistory('');
         addToHistory('SYSTEM LOCKDOWN:');
         addToHistory('  lockdown        - Complete platform lockdown');
@@ -368,16 +357,6 @@ const GovernorTerminalControl = () => {
         }
         addToHistory('');
         break;
-
-      case 'movebalance':
-        addToHistory('');
-        addToHistory('OPENING BALANCE TRANSFER INTERFACE...');
-        addToHistory('Loading investor accounts...');
-        addToHistory('Preparing secure transfer modal...');
-        addToHistory('');
-        setShowMoveBalanceModal(true);
-        break;
-
       case 'clear':
         setCommandHistory([
           'Interactive Brokers Governor Control Terminal v3.0.0',
@@ -649,98 +628,6 @@ const GovernorTerminalControl = () => {
     }
     
     setIsProcessing(false);
-  };
-
-  const handleMoveBalance = async () => {
-    if (!selectedInvestorForMove || !user || !moveAmount || !moveReason.trim()) {
-      alert('Please fill in all required fields');
-      return;
-    }
-
-    const amount = parseFloat(moveAmount);
-    if (isNaN(amount) || amount <= 0) {
-      alert('Please enter a valid amount');
-      return;
-    }
-
-    if (amount > selectedInvestorForMove.currentBalance) {
-      alert('Amount cannot exceed investor balance');
-      return;
-    }
-
-    if (!confirm(`MOVE BALANCE: ${selectedInvestorForMove.name}\n\nAmount: $${amount.toLocaleString()}\nFrom: ${selectedInvestorForMove.name} (Balance: $${selectedInvestorForMove.currentBalance.toLocaleString()})\nTo: Admin Commission Balance\n\nReason: ${moveReason}\n\nThis action will be permanently logged. Continue?`)) {
-      return;
-    }
-
-    setIsMovingBalance(true);
-    
-    try {
-      // Deduct from investor balance
-      const newInvestorBalance = selectedInvestorForMove.currentBalance - amount;
-      await FirestoreService.updateInvestorBalance(selectedInvestorForMove.id, newInvestorBalance);
-      
-      // Add transaction record for investor (debit)
-      await FirestoreService.addTransaction({
-        investorId: selectedInvestorForMove.id,
-        type: 'Adjustment',
-        amount: -amount,
-        date: new Date().toISOString().split('T')[0],
-        status: 'Completed',
-        description: `Governor balance transfer: ${moveReason}`,
-        processedBy: user.id
-      });
-      
-      // Add commission record for admin
-      await FirestoreService.addCommission({
-        investorId: selectedInvestorForMove.id,
-        investorName: selectedInvestorForMove.name,
-        withdrawalAmount: amount, // Using amount as base for commission calculation
-        commissionRate: 100, // 100% since this is a direct transfer
-        commissionAmount: amount,
-        date: new Date().toISOString().split('T')[0],
-        status: 'Earned'
-      });
-      
-      // Log audit action
-      await FirestoreService.logAuditAction(
-        user.id,
-        user.name,
-        'Balance Transfer',
-        selectedInvestorForMove.id,
-        selectedInvestorForMove.name,
-        {
-          transferAmount: amount,
-          reason: moveReason,
-          fromBalance: selectedInvestorForMove.currentBalance,
-          toBalance: newInvestorBalance,
-          transferType: 'investor_to_admin_commission'
-        }
-      );
-      
-      // Add to terminal history
-      addToHistory('');
-      addToHistory(`BALANCE TRANSFER COMPLETED:`);
-      addToHistory(`  Investor: ${selectedInvestorForMove.name}`);
-      addToHistory(`  Amount Transferred: $${amount.toLocaleString()}`);
-      addToHistory(`  Previous Balance: $${selectedInvestorForMove.currentBalance.toLocaleString()}`);
-      addToHistory(`  New Balance: $${newInvestorBalance.toLocaleString()}`);
-      addToHistory(`  Reason: ${moveReason}`);
-      addToHistory(`  Added to Admin Commission Balance: $${amount.toLocaleString()}`);
-      addToHistory('');
-      
-      // Close modal and reset
-      setShowMoveBalanceModal(false);
-      setSelectedInvestorForMove(null);
-      setMoveAmount('');
-      setMoveReason('');
-      
-    } catch (error) {
-      console.error('Error moving balance:', error);
-      addToHistory('ERROR: Balance transfer failed.');
-      addToHistory('');
-    } finally {
-      setIsMovingBalance(false);
-    }
   };
 
   const handleFunctionToggle = async (func: string, enable: boolean) => {
@@ -1289,215 +1176,6 @@ const GovernorTerminalControl = () => {
           </div>
         </div>
       </motion.div>
-
-      {/* Move Balance Modal */}
-      {showMoveBalanceModal && (
-        <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowMoveBalanceModal(false)}>
-          <div className="flex min-h-screen items-center justify-center p-4">
-            <div 
-              className="relative w-full max-w-2xl bg-white border border-gray-300 shadow-xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="px-6 py-4 border-b border-gray-300 bg-gray-50 flex justify-between items-center">
-                <h3 className="text-xl font-bold text-gray-900 uppercase tracking-wide">
-                  GOVERNOR BALANCE TRANSFER
-                </h3>
-                <button
-                  onClick={() => {
-                    setShowMoveBalanceModal(false);
-                    setSelectedInvestorForMove(null);
-                    setMoveAmount('');
-                    setMoveReason('');
-                    addToHistory('Balance transfer cancelled by Governor.');
-                    addToHistory('');
-                  }}
-                  className="p-2 hover:bg-gray-200 transition-colors border border-gray-300"
-                >
-                  <span className="text-gray-500 text-lg">×</span>
-                </button>
-              </div>
-              
-              <div className="p-6">
-                <div className="space-y-6">
-                  {/* Warning Notice */}
-                  <div className="bg-red-50 border border-red-300 p-4">
-                    <div className="flex items-start space-x-3">
-                      <AlertTriangle size={20} className="text-red-600 mt-0.5" />
-                      <div>
-                        <h4 className="font-bold text-red-800 uppercase tracking-wide">GOVERNOR BALANCE TRANSFER</h4>
-                        <p className="text-red-700 text-sm mt-1 uppercase tracking-wide">
-                          This action will transfer funds from an investor's balance to the admin commission balance. 
-                          This operation is irreversible and will be permanently logged in the audit trail.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Investor Selection */}
-                  {!selectedInvestorForMove ? (
-                    <div>
-                      <h4 className="font-bold text-gray-900 mb-4 uppercase tracking-wide">SELECT INVESTOR ACCOUNT</h4>
-                      <div className="max-h-64 overflow-y-auto space-y-2 border border-gray-300">
-                        {investors.filter(inv => inv.currentBalance > 0).map(investor => (
-                          <button
-                            key={investor.id}
-                            onClick={() => setSelectedInvestorForMove(investor)}
-                            className="w-full text-left p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                          >
-                            <div className="flex justify-between items-center">
-                              <div>
-                                <p className="font-bold text-gray-900 uppercase tracking-wide">{investor.name}</p>
-                                <p className="text-sm text-gray-600 uppercase tracking-wide">{investor.country}</p>
-                                <p className="text-xs text-gray-500 uppercase tracking-wide">
-                                  ID: {investor.id.slice(-8)} | STATUS: {investor.accountStatus || 'ACTIVE'}
-                                </p>
-                              </div>
-                              <div className="text-right">
-                                <p className="font-bold text-gray-900 text-lg">${investor.currentBalance.toLocaleString()}</p>
-                                <p className="text-xs text-gray-500 uppercase tracking-wide">AVAILABLE BALANCE</p>
-                              </div>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                      {investors.filter(inv => inv.currentBalance > 0).length === 0 && (
-                        <div className="text-center py-8">
-                          <p className="text-gray-500 font-bold uppercase tracking-wide">NO INVESTORS WITH AVAILABLE BALANCE</p>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="space-y-6">
-                      {/* Selected Investor */}
-                      <div className="bg-gray-50 p-4 border border-gray-300">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-bold text-gray-900 uppercase tracking-wide">TRANSFERRING FROM: {selectedInvestorForMove.name}</h4>
-                            <p className="text-sm text-gray-600 uppercase tracking-wide">
-                              {selectedInvestorForMove.country} | AVAILABLE: ${selectedInvestorForMove.currentBalance.toLocaleString()}
-                            </p>
-                          </div>
-                          <button
-                            onClick={() => setSelectedInvestorForMove(null)}
-                            className="px-3 py-1 bg-white border border-gray-300 text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors uppercase tracking-wide"
-                          >
-                            CHANGE
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Transfer Amount */}
-                      <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          TRANSFER AMOUNT (USD) <span className="text-red-600">*</span>
-                        </label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span className="text-gray-700">$</span>
-                          </div>
-                          <input
-                            type="number"
-                            value={moveAmount}
-                            onChange={(e) => setMoveAmount(e.target.value)}
-                            className="w-full pl-8 pr-4 py-3 border border-gray-300 focus:ring-1 focus:ring-gray-500 focus:border-gray-500 font-bold"
-                            placeholder="0.00"
-                            step="0.01"
-                            min="0.01"
-                            max={selectedInvestorForMove.currentBalance}
-                            required
-                          />
-                        </div>
-                        <p className="text-xs text-gray-600 mt-1 uppercase tracking-wide">
-                          MAXIMUM: ${selectedInvestorForMove.currentBalance.toLocaleString()}
-                        </p>
-                        {moveAmount && !isNaN(parseFloat(moveAmount)) && (
-                          <div className="mt-2 bg-blue-50 border border-blue-200 p-3 rounded">
-                            <p className="text-blue-800 text-sm font-bold uppercase tracking-wide">
-                              NEW INVESTOR BALANCE: ${(selectedInvestorForMove.currentBalance - parseFloat(moveAmount)).toLocaleString()}
-                            </p>
-                            <p className="text-blue-700 text-xs uppercase tracking-wide">
-                              AMOUNT ADDED TO ADMIN COMMISSION: ${parseFloat(moveAmount).toLocaleString()}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Transfer Reason */}
-                      <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          TRANSFER REASON <span className="text-red-600">*</span>
-                        </label>
-                        <textarea
-                          value={moveReason}
-                          onChange={(e) => setMoveReason(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 focus:ring-1 focus:ring-gray-500 focus:border-gray-500 font-medium"
-                          rows={3}
-                          placeholder="MANDATORY: Explain why this balance transfer is necessary (e.g., policy violation penalty, account closure settlement, etc.)..."
-                          required
-                        />
-                        <p className="text-xs text-gray-600 mt-1 uppercase tracking-wide">
-                          THIS REASON WILL BE PERMANENTLY RECORDED IN THE AUDIT TRAIL
-                        </p>
-                      </div>
-
-                      {/* Transfer Summary */}
-                      {moveAmount && moveReason.trim() && (
-                        <div className="bg-gray-50 p-4 border border-gray-300">
-                          <h4 className="font-bold text-gray-900 mb-3 uppercase tracking-wide">TRANSFER SUMMARY</h4>
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <p className="text-gray-600 font-bold uppercase tracking-wide">FROM INVESTOR</p>
-                              <p className="text-gray-900 font-medium">{selectedInvestorForMove.name}</p>
-                              <p className="text-gray-600 text-xs">Current: ${selectedInvestorForMove.currentBalance.toLocaleString()}</p>
-                              <p className="text-gray-600 text-xs">After: ${(selectedInvestorForMove.currentBalance - parseFloat(moveAmount)).toLocaleString()}</p>
-                            </div>
-                            <div>
-                              <p className="text-gray-600 font-bold uppercase tracking-wide">TO ADMIN COMMISSION</p>
-                              <p className="text-gray-900 font-medium">Commission Balance</p>
-                              <p className="text-gray-600 text-xs">Transfer: +${parseFloat(moveAmount).toLocaleString()}</p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Action Buttons */}
-                      <div className="flex space-x-4">
-                        <button
-                          onClick={() => {
-                            setShowMoveBalanceModal(false);
-                            setSelectedInvestorForMove(null);
-                            setMoveAmount('');
-                            setMoveReason('');
-                            addToHistory('Balance transfer cancelled by Governor.');
-                            addToHistory('');
-                          }}
-                          className="flex-1 px-4 py-3 bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition-colors uppercase tracking-wide"
-                        >
-                          CANCEL TRANSFER
-                        </button>
-                        <button
-                          onClick={handleMoveBalance}
-                          disabled={!moveAmount || !moveReason.trim() || isMovingBalance}
-                          className="flex-1 px-4 py-3 bg-red-600 text-white font-bold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wide border border-red-700"
-                        >
-                          {isMovingBalance ? (
-                            <div className="flex items-center justify-center">
-                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                              TRANSFERRING...
-                            </div>
-                          ) : (
-                            'EXECUTE TRANSFER'
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
