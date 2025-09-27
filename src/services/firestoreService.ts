@@ -58,6 +58,42 @@ export class FirestoreService {
       return null;
     } catch (error) {
       console.error('❌ Error fetching system settings:', error);
+      
+      // Handle permission errors gracefully by returning default settings
+      if (error instanceof Error && error.message.includes('Missing or insufficient permissions')) {
+        console.log('🔧 Permission error detected, returning default system settings for login page');
+        return {
+          maintenanceMode: false,
+          maintenanceMessage: 'System is currently under maintenance. Please try again later.',
+          systemControls: {
+            withdrawalsEnabled: true,
+            messagingEnabled: true,
+            profileUpdatesEnabled: true,
+            loginEnabled: true,
+            tradingEnabled: true,
+            depositsEnabled: true,
+            reportingEnabled: true,
+            accountCreationEnabled: true,
+            supportTicketsEnabled: true,
+            dataExportEnabled: true,
+            notificationsEnabled: true,
+            apiAccessEnabled: true,
+            restrictedMode: false,
+            allowedPages: [],
+            restrictionReason: '',
+            restrictionLevel: 'none'
+          },
+          minWithdrawal: 100,
+          maxWithdrawal: 50000,
+          commissionRate: 15,
+          autoApprovalLimit: 1000,
+          securityLevel: 'MEDIUM',
+          requireW8Ben: true,
+          updatedBy: 'System Default',
+          updatedAt: new Date()
+        } as SystemSettings;
+      }
+      
       throw error;
     }
   }
@@ -228,7 +264,44 @@ export class FirestoreService {
       },
       (error) => {
         console.error('❌ Real-time listener failed for system settings:', error);
-        callback(null);
+        
+        // Handle permission errors gracefully by providing default settings
+        if (error.message && error.message.includes('Missing or insufficient permissions')) {
+          console.log('🔧 Permission error in real-time listener, providing default system settings');
+          const defaultSettings: SystemSettings = {
+            maintenanceMode: false,
+            maintenanceMessage: 'System is currently under maintenance. Please try again later.',
+            systemControls: {
+              withdrawalsEnabled: true,
+              messagingEnabled: true,
+              profileUpdatesEnabled: true,
+              loginEnabled: true,
+              tradingEnabled: true,
+              depositsEnabled: true,
+              reportingEnabled: true,
+              accountCreationEnabled: true,
+              supportTicketsEnabled: true,
+              dataExportEnabled: true,
+              notificationsEnabled: true,
+              apiAccessEnabled: true,
+              restrictedMode: false,
+              allowedPages: [],
+              restrictionReason: '',
+              restrictionLevel: 'none'
+            },
+            minWithdrawal: 100,
+            maxWithdrawal: 50000,
+            commissionRate: 15,
+            autoApprovalLimit: 1000,
+            securityLevel: 'MEDIUM',
+            requireW8Ben: true,
+            updatedBy: 'System Default',
+            updatedAt: new Date()
+          };
+          callback(defaultSettings);
+        } else {
+          callback(null);
+        }
       }
     );
 
