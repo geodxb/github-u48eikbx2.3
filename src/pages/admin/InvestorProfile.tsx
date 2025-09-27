@@ -892,13 +892,14 @@ const InvestorProfile = () => {
                   investorName={selectedProgressRequest.investorName}
                   rejectionReason={selectedProgressRequest.reason}
                   withdrawalRequest={selectedProgressRequest}
-                  investor={investors.find(inv => inv.id === selectedProgressRequest.investorId)}
+                  priorityFlags={[]} // TODO: Load actual priority flags
                   onPriorityRequest={() => {
                     setShowProgressModal(false);
                     setSelectedPriorityWithdrawal(selectedProgressRequest);
                     setShowPriorityRequestModal(true);
                   }}
                   showPriorityButton={true}
+                  investor={getInvestorDetails(selectedProgressRequest.investorId)}
                 />
               </div>
             </div>

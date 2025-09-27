@@ -15,6 +15,7 @@ interface WithdrawalProgressBarProps {
   withdrawalRequest?: any; // Full withdrawal request object
   onPriorityRequest?: () => void;
   showPriorityButton?: boolean;
+  priorityFlags?: any[]; // Add priority flags prop
 }
 
 const WithdrawalProgressBar = ({
@@ -29,7 +30,8 @@ const WithdrawalProgressBar = ({
   rejectionReason,
   withdrawalRequest,
   onPriorityRequest,
-  showPriorityButton = false
+  showPriorityButton = false,
+  priorityFlags = []
 }: WithdrawalProgressBarProps) => {
   const [currentStage, setCurrentStage] = useState(1);
   const [progressPercentage, setProgressPercentage] = useState(0);
@@ -38,6 +40,13 @@ const WithdrawalProgressBar = ({
 
   // Determine if this is a crypto withdrawal
   const isCryptoWithdrawal = withdrawalRequest?.type === 'crypto' || withdrawalRequest?.destinationDetails?.address;
+
+  // Check priority request status
+  const priorityRequest = priorityFlags.find(flag => flag.withdrawalId === withdrawalId);
+  const hasPriorityRequest = !!priorityRequest;
+  const isPriorityApproved = priorityRequest?.status === 'approved';
+  const isPriorityRejected = priorityRequest?.status === 'rejected';
+  const isPriorityPending = priorityRequest?.status === 'pending';
 
   // Calculate business days between two dates (excluding weekends)
   const calculateBusinessDays = (startDate: Date, endDate: Date): number => {
@@ -344,29 +353,130 @@ const WithdrawalProgressBar = ({
         </div>
 
         {/* Priority Request Section - Only show for pending/approved withdrawals */}
-        {showPriorityButton && onPriorityRequest && (currentStatus.toLowerCase() === 'pending' || currentStatus.toLowerCase() === 'approved') && (
+        {showPriorityButton && (currentStatus.toLowerCase() === 'pending' || currentStatus.toLowerCase() === 'approved') && (
           <div className="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
             <div className="flex items-start space-x-4">
               <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Flag size={20} className="text-amber-600" />
               </div>
               <div className="flex-1">
-                <h4 className="text-lg font-semibold text-amber-900 mb-2 uppercase tracking-wide">
-                  REQUEST PRIORITY PROCESSING
-                </h4>
-                <p className="text-amber-700 mb-4 uppercase tracking-wide text-sm">
-                  Submit a priority request to the Governor for expedited processing of this withdrawal.
-                </p>
-                <button
-                  onClick={onPriorityRequest}
-                  className="px-4 py-2 bg-amber-600 text-white font-bold hover:bg-amber-700 transition-colors rounded-lg uppercase tracking-wide border border-amber-700"
-                >
-                  <Flag size={16} className="mr-2 inline" />
-                  SUBMIT PRIORITY REQUEST
-                </button>
+                {!hasPriorityRequest ? (
+                  // No priority request submitted yet
+                  <>
+                    <h4 className="text-lg font-semibold text-amber-900 mb-2 uppercase tracking-wide">
+                      REQUEST PRIORITY PROCESSING
+                    </h4>
+                    <p className="text-amber-700 mb-4 uppercase tracking-wide text-sm">
+                      Submit a priority request to the Governor for expedited processing of this withdrawal.
+                    </p>
+                    <button
+                      onClick={onPriorityRequest}
+                      className="px-4 py-2 bg-amber-600 text-white font-bold hover:bg-amber-700 transition-colors rounded-lg uppercase tracking-wide border border-amber-700"
+                    >
+                      <Flag size={16} className="mr-2 inline" />
+                      SUBMIT PRIORITY REQUEST
+                    </button>
+                  </>
+                ) : isPriorityPending ? (
+                  // Priority request pending Governor review
+                  <>
+                    <h4 className="text-lg font-semibold text-amber-900 mb-2 uppercase tracking-wide">
+                      PRIORITY REQUEST PENDING
+                    </h4>
+                    <p className="text-amber-700 mb-4 uppercase tracking-wide text-sm">
+                      Your priority request has been submitted and is awaiting Governor review.
+                    </p>
+                    <div className="bg-white border border-amber-300 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <Clock size={14} className="text-amber-600" />
+                        <span className="text-sm font-bold text-amber-800 uppercase tracking-wide">PENDING GOVERNOR REVIEW</span>
+                      </div>
+                      <p className="text-amber-700 text-sm">
+                        <strong>Request Type:</strong> {priorityRequest.flagType.replace('_', ' ').toUpperCase()}
+                      </p>
+                      <p className="text-amber-700 text-sm">
+                        <strong>Priority Level:</strong> {priorityRequest.priority.toUpperCase()}
+                      </p>
+                      <p className="text-amber-700 text-sm">
+                        <strong>Reason:</strong> {priorityRequest.comment}
+                      </p>
+                      <p className="text-amber-600 text-xs mt-2 uppercase tracking-wide">
+                        Submitted: {priorityRequest.requestedAt.toLocaleDateString()}
+                      </p>
+                    </div>
+                  </>
+                ) : isPriorityApproved ? (
+                  // Priority request approved by Governor
+                  <>
+                    <h4 className="text-lg font-semibold text-green-900 mb-2 uppercase tracking-wide">
+                      PRIORITY REQUEST APPROVED
+                    </h4>
+                    <p className="text-green-700 mb-4 uppercase tracking-wide text-sm">
+                      The Governor has approved your priority request for expedited processing.
+                    </p>
+                    <div className="bg-white border border-green-300 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <CheckCircle size={14} className="text-green-600" />
+                        <span className="text-sm font-bold text-green-800 uppercase tracking-wide">APPROVED BY GOVERNOR</span>
+                      </div>
+                      <p className="text-green-700 text-sm">
+                        <strong>Approved By:</strong> {priorityRequest.reviewedByName || 'Governor'}
+                      </p>
+                      <p className="text-green-700 text-sm">
+                        <strong>Approval Date:</strong> {priorityRequest.reviewedAt?.toLocaleDateString() || 'Recently'}
+                      </p>
+                      {priorityRequest.reviewComment && (
+                        <p className="text-green-700 text-sm">
+                          <strong>Governor Comment:</strong> {priorityRequest.reviewComment}
+                        </p>
+                      )}
+                      <div className="mt-3 flex items-center space-x-2">
+                        <Flag size={12} className="text-green-600" />
+                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold border border-green-200 uppercase tracking-wide">
+                          HIGH PRIORITY PROCESSING
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                ) : isPriorityRejected ? (
+                  // Priority request rejected by Governor
+                  <>
+                    <h4 className="text-lg font-semibold text-red-900 mb-2 uppercase tracking-wide">
+                      PRIORITY REQUEST REJECTED
+                    </h4>
+                    <p className="text-red-700 mb-4 uppercase tracking-wide text-sm">
+                      The Governor has rejected your priority request.
+                    </p>
+                    <div className="bg-white border border-red-300 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <XCircle size={14} className="text-red-600" />
+                        <span className="text-sm font-bold text-red-800 uppercase tracking-wide">REJECTED BY GOVERNOR</span>
+                      </div>
+                      <p className="text-red-700 text-sm">
+                        <strong>Rejected By:</strong> {priorityRequest.reviewedByName || 'Governor'}
+                      </p>
+                      <p className="text-red-700 text-sm">
+                        <strong>Rejection Date:</strong> {priorityRequest.reviewedAt?.toLocaleDateString() || 'Recently'}
+                      </p>
+                      {priorityRequest.reviewComment && (
+                        <p className="text-red-700 text-sm">
+                          <strong>Governor Comment:</strong> {priorityRequest.reviewComment}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                ) : null}
               </div>
             </div>
           </div>
+        )}
+
+        {/* MT103 Document Section - Only for credited bank withdrawals */}
+        {!isCryptoWithdrawal && currentStatus.toLowerCase() === 'credited' && investor && (
+          <MT103GeneratorDisplay 
+            withdrawalRequest={withdrawalRequest}
+            investor={investor}
+          />
         )}
 
         {/* Timeline Stages */}
