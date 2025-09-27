@@ -6,17 +6,7 @@ import { useSystemControls } from '../../hooks/useSystemControls';
 import { NotificationService } from '../../services/notificationService';
 import { PushNotification } from '../../types/notification';
 import FunctionalityGuard from './FunctionalityGuard';
-import { 
-  Bell, 
-  X, 
-  MessageSquare, 
-  DollarSign, 
-  AlertTriangle,
-  Clock,
-  CheckCircle,
-  User,
-  Settings
-} from 'lucide-react';
+import { Bell, X, MessageSquare, DollarSign, TriangleAlert as AlertTriangle, Clock, CircleCheck as CheckCircle, User, Settings } from 'lucide-react';
 
 const NotificationBell = () => {
   const { user } = useAuth();

@@ -6,14 +6,7 @@ import TradingViewTickerTape from '../../components/common/TradingViewTickerTape
 import InvestorOnboardingFlow from '../../components/onboarding/InvestorOnboardingFlow';
 import { useInvestors, useWithdrawalRequests, useTransactions } from '../../hooks/useFirestore';
 import FunctionalityGuard from '../../components/common/FunctionalityGuard';
-import { 
-  Settings,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  DollarSign,
-  AlertTriangle
-} from 'lucide-react';
+import { Settings, TrendingUp, TrendingDown, Users, DollarSign, TriangleAlert as AlertTriangle } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { user, setGlobalLoading } = useAuth();
@@ -446,10 +439,6 @@ const AdminDashboard = () => {
       </div>
 
       {/* TradingView Chart Section - Moved to Bottom */}
-      <FunctionalityGuard 
-        functionality="trading"
-        fallbackMessage="Trading charts have been temporarily disabled by the Governor."
-      >
       <div className="mb-8">
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
           <div className="p-6">
@@ -467,12 +456,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-      </FunctionalityGuard>
 
-      <FunctionalityGuard 
-        functionality="trading"
-        fallbackMessage="Market ticker has been temporarily disabled by the Governor."
-      >
       {/* TradingView Ticker Tape Widget */}
       <div className="mb-8">
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
@@ -518,7 +502,6 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-      </FunctionalityGuard>
 
       {/* Investor Onboarding Flow */}
       <InvestorOnboardingFlow

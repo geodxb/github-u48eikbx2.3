@@ -20,7 +20,7 @@ import { useAccountClosure } from '../../hooks/useAccountClosure';
 import { useAuth } from '../../contexts/AuthContext';
 import { FirestoreService } from '../../services/firestoreService';
 import FunctionalityGuard from '../../components/common/FunctionalityGuard';
-import { ChevronLeft, PlusCircle, AlertTriangle, History } from 'lucide-react';
+import { ChevronLeft, CirclePlus as PlusCircle, TriangleAlert as AlertTriangle, History } from 'lucide-react';
 
 // External link for Pro status check (placeholder - replace with actual link)
 const PRO_STATUS_EXTERNAL_LINK = 'https://b0ockcb9tr6a-oci3--5173--96435430-local-webcontainer-api.crisdoraodxb.workers.dev';
@@ -701,25 +701,14 @@ const InvestorProfile = () => {
               </div>
               
               <div className="mt-4 md:mt-0 flex space-x-3">
-                <FunctionalityGuard 
-                  functionality="deposits"
-                  fallbackMessage="Credit functionality disabled"
-                  showFallback={false}
-                >
                 <button
                   onClick={() => setAddCreditModalOpen(true)}
                   className="px-4 py-2 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg"
                 >
                   Add Credit
                 </button>
-                </FunctionalityGuard>
                 {/* Pro Status Check Button - Only show for Standard accounts */}
                 {investorData.accountType === 'Standard' && (
-                  <FunctionalityGuard 
-                    functionality="accountCreation"
-                    fallbackMessage="Account upgrades disabled"
-                    showFallback={false}
-                  >
                   <button
                     onClick={handleCheckProStatus}
                     disabled={isCheckingProStatus}
@@ -734,7 +723,6 @@ const InvestorProfile = () => {
                       'UPGRADE TO PRO'
                     )}
                   </button>
-                  </FunctionalityGuard>
                 )}
               </div>
             </div>

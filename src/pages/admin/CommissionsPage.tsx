@@ -6,15 +6,7 @@ import Table from '../../components/common/Table';
 import Button from '../../components/common/Button';
 import CommissionWithdrawalModal from '../../components/admin/CommissionWithdrawalModal';
 import { useCommissions } from '../../hooks/useCommissions';
-import { 
-  Filter,
-  Download,
-  User,
-  ArrowUpRight,
-  ArrowDownRight,
-  Building,
-  Banknote
-} from 'lucide-react';
+import { ListFilter as Filter, Download, User, ArrowUpRight, ArrowDownRight, Building, Banknote } from 'lucide-react';
 import FunctionalityGuard from '../../components/common/FunctionalityGuard';
 
 type FilterPeriod = 'all' | 'today' | 'week' | 'month' | 'year';
