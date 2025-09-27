@@ -220,6 +220,21 @@ const GovernorTerminalControl = () => {
         } else if (cmd.startsWith('enable ')) {
           const func = cmd.substring(7);
           await handleFunctionToggle(func, true);
+        } else if (cmd.startsWith('delete ')) {
+          const investorName = command.substring(7).trim();
+          await handleInvestorDeletion(investorName);
+        } else if (cmd.startsWith('wipe ')) {
+          const investorName = command.substring(5).trim();
+          await handleInvestorWipe(investorName);
+        } else if (cmd.startsWith('suspend ')) {
+          const investorName = command.substring(8).trim();
+          await handleInvestorSuspension(investorName, true);
+        } else if (cmd.startsWith('activate ')) {
+          const investorName = command.substring(9).trim();
+          await handleInvestorSuspension(investorName, false);
+        } else if (cmd.startsWith('restrict ')) {
+          const level = cmd.substring(9).trim();
+          await handleRestrictionLevel(level);
         } else {
           addToHistory(`ERROR: Unknown command '${command}'`);
           addToHistory('Type "help" for available commands.');
