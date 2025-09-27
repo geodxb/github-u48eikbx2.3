@@ -1194,9 +1194,10 @@ const GovernorTerminalControl = () => {
 
       {/* Move Balance Modal */}
       <Modal
-        <div className="fixed inset-0 bg-black/50 z-50">
+        isOpen={showMoveBalanceModal}
         onClose={() => setShowMoveBalanceModal(false)}
         title="Transfer Investor Balance to Admin Commission"
+      >
       >
         <div className="p-4">
           <p className="text-gray-600 mb-4">
@@ -1224,7 +1225,6 @@ const GovernorTerminalControl = () => {
               </div>
             ))}
           </div>
-        </div>
       </Modal>
     </div>
   );
