@@ -6,8 +6,6 @@ import { FirestoreService } from '../../services/firestoreService';
 import { AccountClosureService } from '../../services/accountClosureService';
 import { useInvestors } from '../../hooks/useFirestore';
 import { SystemSettings } from '../../types/user';
-import { TriangleAlert as AlertTriangle } from 'lucide-react';
-import Modal from '../common/Modal';
 
 const GovernorTerminalControl = () => {
   const { user } = useAuth();
@@ -28,7 +26,6 @@ const GovernorTerminalControl = () => {
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
-  const [showMoveBalanceModal, setShowMoveBalanceModal] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -89,7 +86,6 @@ const GovernorTerminalControl = () => {
         addToHistory('  wipe <name>     - Complete data wipe (irreversible)');
         addToHistory('  suspend <name>  - Suspend investor account');
         addToHistory('  activate <name> - Activate investor account');
-        addToHistory('  movebalance     - Transfer investor balance to admin commission');
         addToHistory('');
         addToHistory('SYSTEM LOCKDOWN:');
         addToHistory('  lockdown        - Complete platform lockdown');
@@ -226,15 +222,6 @@ const GovernorTerminalControl = () => {
         } catch (error) {
           addToHistory('ERROR: Failed to create account closure request.');
         }
-        addToHistory('');
-        break;
-
-      case 'movebalance':
-        addToHistory('');
-        addToHistory('OPENING BALANCE TRANSFER INTERFACE...');
-        addToHistory('Loading investor accounts with available balance...');
-        setShowMoveBalanceModal(true);
-        addToHistory('Balance transfer modal opened.');
         addToHistory('');
         break;
 
@@ -1191,111 +1178,8 @@ const GovernorTerminalControl = () => {
           </div>
         </div>
       </motion.div>
+    </div>
+  );
+};
 
-      {/* Move Balance Modal */}
-      {showMoveBalanceModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div 
-            className="relative w-full max-w-2xl bg-white rounded-lg shadow-xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="px-6 py-4 border-b border-gray-300 bg-gray-50 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-900 uppercase tracking-wide">
-                TRANSFER INVESTOR BALANCE TO ADMIN COMMISSION
-              </h3>
-              <button
-                onClick={() => setShowMoveBalanceModal(false)}
-                className="p-2 hover:bg-gray-200 transition-colors border border-gray-300"
-              >
-                <span className="text-gray-500 text-lg">×</span>
-              </button>
-            </div>
-            
-            <div className="p-6">
-              <div className="space-y-6">
-                {selectedInvestorForTransfer && (
-                  <>
-                    <div className="bg-gray-50 p-4 border border-gray-300">
-                      <h4 className="font-bold text-gray-900 mb-3 uppercase tracking-wide">TRANSFER DETAILS</h4>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <p className="text-gray-600 font-bold uppercase tracking-wide">FROM INVESTOR</p>
-                          <p className="text-gray-900">{selectedInvestorForTransfer.name}</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600 font-bold uppercase tracking-wide">CURRENT BALANCE</p>
-                          <p className="text-gray-900">${selectedInvestorForTransfer.currentBalance.toLocaleString()}</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600 font-bold uppercase tracking-wide">TO ADMIN</p>
-                          <p className="text-gray-900">{user?.name || 'Admin'}</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600 font-bold uppercase tracking-wide">TRANSFER AMOUNT</p>
-                          <p className="text-gray-900">${selectedInvestorForTransfer.currentBalance.toLocaleString()}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-red-50 border border-red-300 p-4">
-                      <div className="flex items-start space-x-3">
-                        <AlertTriangle size={20} className="text-red-600 mt-0.5" />
-                        <div>
-                          <h4 className="font-bold text-red-800 uppercase tracking-wide">CRITICAL OPERATION</h4>
-                          <p className="text-red-700 text-sm mt-1 uppercase tracking-wide">
-                            This will transfer the entire investor balance to admin commission account. 
-                            This action is irreversible and will be logged in the audit trail.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex space-x-4">
-                      <button
-                        onClick={() => setShowMoveBalanceModal(false)}
-                        className="flex-1 px-4 py-3 bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition-colors uppercase tracking-wide"
-                      >
-                        CANCEL
-                      </button>
-                      <button
-                        onClick={async (e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          
-                          if (confirm(`TRANSFER BALANCE: ${selectedInvestorForTransfer.name}\n\nTransfer $${selectedInvestorForTransfer.currentBalance.toLocaleString()} to admin commission?\n\nThis action cannot be undone.`)) {
-                            try {
-                              // Add to terminal output
-                              addToOutput(`> transfer-balance ${selectedInvestorForTransfer.id} ${selectedInvestorForTransfer.currentBalance}`);
-                              addToOutput(`[TRANSFER] Initiating balance transfer...`);
-                              addToOutput(`[TRANSFER] From: ${selectedInvestorForTransfer.name} (${selectedInvestorForTransfer.id})`);
-                              addToOutput(`[TRANSFER] Amount: $${selectedInvestorForTransfer.currentBalance.toLocaleString()}`);
-                              addToOutput(`[TRANSFER] To: Admin Commission Account`);
-                              addToOutput(`[TRANSFER] Processing transfer...`);
-                              
-                              // Execute the transfer
-                              await executeTransferBalance(selectedInvestorForTransfer.id, selectedInvestorForTransfer.currentBalance);
-                              
-                              addToOutput(`[TRANSFER] Transfer completed successfully`);
-                              addToOutput(`[AUDIT] Balance transfer logged in audit trail`);
-                              addToOutput(`[SYSTEM] Investor balance updated to $0.00`);
-                              addToOutput(`[SYSTEM] Admin commission increased by $${selectedInvestorForTransfer.currentBalance.toLocaleString()}`);
-                              
-                              setShowMoveBalanceModal(false);
-                              setSelectedInvestorForTransfer(null);
-                            } catch (error) {
-                              addToOutput(`[ERROR] Transfer failed: ${error}`);
-                            }
-                          }
-                        }}
-                        className="flex-1 px-4 py-3 bg-red-600 text-white font-bold hover:bg-red-700 transition-colors uppercase tracking-wide border border-red-700"
-                      >
-                        EXECUTE TRANSFER
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      ,
+export default GovernorTerminalControl;
