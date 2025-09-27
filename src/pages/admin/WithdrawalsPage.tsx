@@ -660,6 +660,9 @@ const WithdrawalsPage = () => {
       )}
 
       {showFlagModal && selectedFlagWithdrawal && (
+
+      {/* Priority Request Modal */}
+      {showFlagModal && selectedFlagWithdrawal && (
         <WithdrawalFlagModal
           isOpen={showFlagModal}
           onClose={() => {
@@ -676,29 +679,6 @@ const WithdrawalsPage = () => {
           }}
         />
       )}
-
-      {/* Proof of Transfer Modal */}
-      <Modal
-        isOpen={showFlagModal}
-        onClose={() => {
-          setShowProofOfTransfer(false);
-          setSelectedTransferProof(null);
-        }}
-        title="PROOF OF WIRE TRANSFER"
-        size="lg"
-      >
-        {selectedTransferProof ? (
-          <ProofOfTransferGenerator
-            investor={selectedTransferProof.investor}
-            withdrawal={selectedTransferProof.withdrawal}
-            withdrawalRequest={null}
-          />
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-gray-600">Loading transfer details...</p>
-          </div>
-        )}
-      </Modal>
       </FunctionalityGuard>
     </DashboardLayout>
   );
