@@ -13,6 +13,7 @@ interface WithdrawalProgressBarProps {
   investorName: string;
   rejectionReason?: string;
   withdrawalRequest?: any; // Full withdrawal request object
+  investor?: any; // Add investor prop
   onPriorityRequest?: () => void;
   showPriorityButton?: boolean;
   priorityFlags?: any[]; // Add priority flags prop
@@ -29,6 +30,7 @@ const WithdrawalProgressBar = ({
   investorName,
   rejectionReason,
   withdrawalRequest,
+  investor,
   onPriorityRequest,
   showPriorityButton = false,
   priorityFlags = []
@@ -47,6 +49,324 @@ const WithdrawalProgressBar = ({
   const isPriorityApproved = priorityRequest?.status === 'approved';
   const isPriorityRejected = priorityRequest?.status === 'rejected';
   const isPriorityPending = priorityRequest?.status === 'pending';
+
+  // MT103 Generator Component for credited bank withdrawals
+  const MT103GeneratorDisplay = () => {
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
+
+    if (!investor || isCryptoWithdrawal || currentStatus.toLowerCase() !== 'credited') {
+      return null;
+    }
+
+    const generateMT103HTML = () => {
+      const currentDate = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      const currentTime = new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+
+      const transferDate = new Date(submissionDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      const transferAmount = amount;
+      const netAmount = transferAmount * 0.85;
+      const transactionRef = `MT103${Date.now()}${withdrawalId.slice(-6)}`;
+
+      // Get bank details
+      const bankInfo = investor?.bankDetails || investor?.bankAccounts?.[0] || {};
+
+      return `
+        <div style="font-family: 'Courier New', monospace; line-height: 1.2; color: #000; max-width: 800px; margin: 0 auto; padding: 20px; background: white;">
+          <!-- SWIFT MT103 Header -->
+          <div style="border: 2px solid #000; padding: 15px; margin-bottom: 20px; background-color: #f8f9fa;">
+            <div style="text-align: center; margin-bottom: 15px;">
+              <img src="/Screenshot 2025-06-07 024813.png" alt="Interactive Brokers" style="height: 40px; width: auto; object-fit: contain; margin-bottom: 10px;" />
+              <h1 style="font-size: 16px; font-weight: bold; margin: 0; color: #000;">SWIFT MT103 SINGLE CUSTOMER CREDIT TRANSFER</h1>
+              <p style="font-size: 12px; margin: 5px 0 0 0; color: #666;">ADMIN AUTHORIZED WIRE TRANSFER</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 11px;">
+              <div>
+                <strong>Message Type:</strong> MT103<br/>
+                <strong>Reference:</strong> ${transactionRef}<br/>
+                <strong>Date/Time:</strong> ${new Date().toISOString().replace(/[:-]/g, '').slice(0, 15)}
+              </div>
+              <div>
+                <strong>Priority:</strong> ADMIN PROCESSED<br/>
+                <strong>MUR:</strong> ${new Date().toISOString().slice(0, 10).replace(/-/g, '')}IBKRLLC${withdrawalId.slice(-4)}<br/>
+                <strong>Receiver:</strong> ${bankInfo.swiftCode || 'BNKMXXMM'}
+              </div>
+            </div>
+          </div>
+
+          <!-- MT103 Fields -->
+          <div style="border: 1px solid #000; margin-bottom: 20px;">
+            <div style="background-color: #000; color: white; padding: 8px; font-weight: bold; font-size: 12px;">
+              SWIFT MT103 MESSAGE FIELDS - ADMIN AUTHORIZED
+            </div>
+            
+            <div style="padding: 15px; font-family: 'Courier New', monospace; font-size: 11px; line-height: 1.4;">
+              <div style="margin-bottom: 15px;">
+                <strong>:20: Transaction Reference Number</strong><br/>
+                ${transactionRef}
+              </div>
+              
+              <div style="margin-bottom: 15px;">
+                <strong>:23B: Bank Operation Code</strong><br/>
+                CRED
+              </div>
+              
+              <div style="margin-bottom: 15px;">
+                <strong>:32A: Value Date/Currency/Amount</strong><br/>
+                ${new Date(submissionDate).toISOString().slice(2, 10).replace(/-/g, '')}USD${transferAmount.toFixed(2).replace('.', ',')}
+              </div>
+              
+              <div style="margin-bottom: 15px;">
+                <strong>:50K: Ordering Customer</strong><br/>
+                INTERACTIVE BROKERS LLC<br/>
+                ONE PICKWICK PLAZA<br/>
+                GREENWICH, CT 06830<br/>
+                UNITED STATES
+              </div>
+              
+              <div style="margin-bottom: 15px;">
+                <strong>:52A: Ordering Institution</strong><br/>
+                IBKRLLC<br/>
+                INTERACTIVE BROKERS LLC<br/>
+                GREENWICH, CT, US
+              </div>
+              
+              <div style="margin-bottom: 15px;">
+                <strong>:57A: Account With Institution</strong><br/>
+                ${bankInfo.swiftCode || 'BNKMXXMM'}<br/>
+                ${bankInfo.bankName || 'BENEFICIARY BANK'}<br/>
+                ${bankInfo.bankAddress || investor.country}<br/>
+                ${investor.country.toUpperCase()}
+              </div>
+              
+              <div style="margin-bottom: 15px;">
+                <strong>:59: Beneficiary Customer</strong><br/>
+                /${bankInfo.accountNumber || 'ACCOUNT NUMBER'}<br/>
+                ${investor.name.toUpperCase()}<br/>
+                ${investor.country.toUpperCase()}
+              </div>
+              
+              <div style="margin-bottom: 15px;">
+                <strong>:70: Remittance Information</strong><br/>
+                ADMIN AUTHORIZED WITHDRAWAL<br/>
+                CLIENT ID: ${investor.id}<br/>
+                ORIGINAL AMOUNT: USD ${transferAmount.toLocaleString()}<br/>
+                COMMISSION: USD ${(transferAmount * 0.15).toLocaleString()}<br/>
+                NET TRANSFER: USD ${netAmount.toLocaleString()}<br/>
+                AUTHORIZATION: ADMIN APPROVAL
+              </div>
+              
+              <div style="margin-bottom: 15px;">
+                <strong>:71A: Details of Charges</strong><br/>
+                OUR
+              </div>
+              
+              <div style="margin-bottom: 15px;">
+                <strong>:72: Sender to Receiver Information</strong><br/>
+                /ADM/ADMIN AUTHORIZED TRANSFER<br/>
+                /ACC/TRADING ACCOUNT WITHDRAWAL<br/>
+                /RFB/INTERACTIVE BROKERS CLIENT FUNDS<br/>
+                /INV/${investor.name.toUpperCase()}<br/>
+                /AUTH/ADMIN APPROVAL
+              </div>
+            </div>
+          </div>
+
+          <!-- Admin Authorization Section -->
+          <div style="border: 1px solid #000; margin-bottom: 20px;">
+            <div style="background-color: #000; color: white; padding: 8px; font-weight: bold; font-size: 12px;">
+              ADMIN AUTHORIZATION & COMPLIANCE
+            </div>
+            
+            <div style="padding: 15px; font-size: 11px;">
+              <p style="margin: 0 0 10px 0;"><strong>Authorization Level:</strong> ADMIN CONTROL</p>
+              <p style="margin: 0 0 10px 0;"><strong>Authorized By:</strong> ADMIN TEAM</p>
+              <p style="margin: 0 0 10px 0;"><strong>Authorization Date:</strong> ${currentDate.toUpperCase()}</p>
+              <p style="margin: 0 0 10px 0;"><strong>Authorization Time:</strong> ${currentTime}</p>
+              <p style="margin: 0 0 10px 0;"><strong>Processing Reason:</strong> STANDARD WITHDRAWAL APPROVAL</p>
+              <p style="margin: 0 0 10px 0;"><strong>Compliance Status:</strong> ADMIN APPROVED - STANDARD PROCEDURES</p>
+              <p style="margin: 0;"><strong>Digital Signature:</strong> ADM-${new Date().getTime().toString(36).toUpperCase()}</p>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div style="text-align: center; margin-top: 30px; padding-top: 15px; border-top: 2px solid #000; font-size: 10px; color: #666;">
+            <img src="/Screenshot 2025-06-07 024813.png" alt="Interactive Brokers" style="height: 30px; width: auto; object-fit: contain; margin-bottom: 10px;" />
+            <p style="margin: 0;">
+              <strong>INTERACTIVE BROKERS LLC</strong><br/>
+              One Pickwick Plaza, Greenwich, CT 06830, United States<br/>
+              Regulated by SEC, FINRA, CFTC | Member SIPC<br/>
+              <br/>
+              This MT103 was generated under admin authorization on ${currentDate} at ${currentTime}<br/>
+              Document ID: ADM-MT103-${withdrawalId.slice(-8)} | Authorization: ADMIN CONTROL
+            </p>
+          </div>
+        </div>
+      `;
+    };
+
+    const downloadMT103PDF = async () => {
+      setIsGenerating(true);
+      
+      try {
+        // Create temporary div with MT103 content
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = generateMT103HTML();
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.left = '-9999px';
+        tempDiv.style.top = '0';
+        tempDiv.style.width = '800px';
+        tempDiv.style.backgroundColor = 'white';
+        document.body.appendChild(tempDiv);
+
+        // Generate canvas from HTML
+        const canvas = await html2canvas(tempDiv, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: 800,
+          height: tempDiv.scrollHeight
+        });
+
+        // Remove temporary div
+        document.body.removeChild(tempDiv);
+
+        // Create PDF
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210;
+        const pageHeight = 295;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+
+        let position = 0;
+
+        // Add first page
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        // Add additional pages if needed
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        // Download the PDF
+        const fileName = `MT103_${investor.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+        pdf.save(fileName);
+
+      } catch (error) {
+        console.error('Error generating MT103:', error);
+        alert('Failed to generate MT103 document. Please try again.');
+      } finally {
+        setIsGenerating(false);
+      }
+    };
+
+    return (
+      <div className="mt-6 bg-white border border-gray-300">
+        <div className="px-6 py-4 border-b border-gray-300 bg-blue-50">
+          <h5 className="text-lg font-bold text-blue-900 uppercase tracking-wide">
+            MT103 WIRE TRANSFER DOCUMENT
+          </h5>
+        </div>
+        
+        <div className="p-6">
+          <div className="space-y-4">
+            {/* Transfer Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gray-50 p-4 border border-gray-300">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Building size={16} className="text-gray-700" />
+                  <span className="text-sm font-bold text-gray-700 uppercase tracking-wide">BENEFICIARY</span>
+                </div>
+                <p className="font-bold text-gray-900">{investor.name}</p>
+                <p className="text-sm text-gray-700 font-medium">{investor.country}</p>
+              </div>
+              
+              <div className="bg-gray-50 p-4 border border-gray-300">
+                <div className="flex items-center space-x-2 mb-3">
+                  <DollarSign size={16} className="text-gray-700" />
+                  <span className="text-sm font-bold text-gray-700 uppercase tracking-wide">TRANSFER AMOUNT</span>
+                </div>
+                <p className="font-bold text-gray-900">${amount.toLocaleString()}</p>
+                <p className="text-sm text-gray-700 font-medium">NET: ${(amount * 0.85).toLocaleString()}</p>
+              </div>
+              
+              <div className="bg-gray-50 p-4 border border-gray-300">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Calendar size={16} className="text-gray-700" />
+                  <span className="text-sm font-bold text-gray-700 uppercase tracking-wide">VALUE DATE</span>
+                </div>
+                <p className="font-bold text-gray-900">
+                  {new Date(submissionDate).toLocaleDateString()}
+                </p>
+                <p className="text-sm text-gray-700 font-medium">SAME DAY VALUE</p>
+              </div>
+            </div>
+
+            {/* Preview Toggle and Download */}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => setShowPreview(!showPreview)}
+                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition-colors uppercase tracking-wide"
+              >
+                {showPreview ? 'HIDE PREVIEW' : 'SHOW PREVIEW'}
+              </button>
+              <button
+                onClick={downloadMT103PDF}
+                disabled={isGenerating}
+                className="px-4 py-2 bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wide border border-blue-700"
+              >
+                <Download size={16} className="mr-2 inline" />
+                {isGenerating ? 'GENERATING MT103...' : 'DOWNLOAD MT103 DOCUMENT'}
+              </button>
+            </div>
+
+            {/* Document Preview */}
+            {showPreview && (
+              <div className="border border-gray-300">
+                <div className="max-h-96 overflow-y-auto p-4 bg-white">
+                  <div dangerouslySetInnerHTML={{ __html: generateMT103HTML() }} />
+                </div>
+              </div>
+            )}
+
+            {/* Document Information */}
+            <div className="bg-blue-50 border border-blue-300 p-4">
+              <div className="flex items-start space-x-3">
+                <FileText size={20} className="text-blue-600 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-blue-800 uppercase tracking-wide">MT103 DOCUMENT INFORMATION</h4>
+                  <p className="text-blue-700 text-sm mt-1 uppercase tracking-wide">
+                    This MT103 document serves as official proof of wire transfer completion. 
+                    It includes all SWIFT message fields and bank details required for compliance and record keeping.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Calculate business days between two dates (excluding weekends)
   const calculateBusinessDays = (startDate: Date, endDate: Date): number => {
@@ -353,7 +673,7 @@ const WithdrawalProgressBar = ({
         </div>
 
         {/* Priority Request Section - Only show for pending/approved withdrawals */}
-        {showPriorityButton && (currentStatus.toLowerCase() === 'pending' || currentStatus.toLowerCase() === 'approved') && (
+        {showPriorityButton && onPriorityRequest && (currentStatus.toLowerCase() === 'pending' || currentStatus.toLowerCase() === 'approved') && (
           <div className="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
             <div className="flex items-start space-x-4">
               <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -462,6 +782,17 @@ const WithdrawalProgressBar = ({
                         <p className="text-red-700 text-sm">
                           <strong>Governor Comment:</strong> {priorityRequest.reviewComment}
                         </p>
+                       )}
+                     </div>
+                   </>
+                 ) : null}
+               </div>
+             </div>
+           </div>
+         )}
+
+        {/* MT103 Document Section - Only for credited bank withdrawals */}
+        <MT103GeneratorDisplay />
                       )}
                     </div>
                   </>
