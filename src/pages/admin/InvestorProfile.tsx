@@ -439,7 +439,7 @@ const InvestorProfile = () => {
                           </td>
                           <td className="px-6 py-4 text-center">
                             <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full font-medium uppercase tracking-wide">
-                              {request.withdrawalType || 'BANK'}
+                              {request.type || 'BANK'}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-center">
@@ -467,16 +467,12 @@ const InvestorProfile = () => {
                                     Priority Request
                                   </button>
                                 )}
-                                {request.withdrawalType === 'crypto' && request.cryptoWalletAddress && (
+                                {request.type === 'crypto' && request.cryptoWalletAddress && (
                                   <p className="text-xs text-gray-600">
                                     {request.cryptoCoinType}: {request.cryptoWalletAddress.slice(0, 10)}...{request.cryptoWalletAddress.slice(-6)}
                                   </p>
                                 )}
                               </div>
-                                <p className="text-xs text-gray-600">
-                                  {request.cryptoCoinType}: {request.cryptoWalletAddress.slice(0, 10)}...{request.cryptoWalletAddress.slice(-6)}
-                                </p>
-                              )
                               {request.reason && (
                                 <p className="text-xs text-gray-600">{request.reason}</p>
                               )}
