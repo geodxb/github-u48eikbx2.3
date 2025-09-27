@@ -524,14 +524,14 @@ const GovernorTerminalControl = () => {
           if (restrictArgs.length < 2) {
             addToHistory('ERROR: Usage: restrict <level>');
             addToHistory('Available levels: none, partial, full');
-            break;
+            return;
           }
           
           const level = restrictArgs[1].toLowerCase();
           if (!['none', 'partial', 'full'].includes(level)) {
             addToHistory('ERROR: Invalid restriction level.');
             addToHistory('Available levels: none, partial, full');
-            break;
+            return;
           }
           
           addToHistory('');
