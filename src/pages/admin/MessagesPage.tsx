@@ -5,7 +5,7 @@ import MessageThread from '../../components/messaging/MessageThread';
 import { MessageService } from '../../services/messageService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useInvestors } from '../../hooks/useFirestore';
-import { MessageSquare, Send, Users, Shield, Building, AlertTriangle, DollarSign, User, RefreshCw } from 'lucide-react';
+import { MessageSquare, Send, Users, Shield, Building, TriangleAlert as AlertTriangle, DollarSign, User, RefreshCw } from 'lucide-react';
 import FunctionalityGuard from '../../components/common/FunctionalityGuard';
 
 const MessagesPage = () => {
