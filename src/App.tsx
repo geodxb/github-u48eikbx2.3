@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Lock } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
+import { useSystemControls } from './hooks/useSystemControls';
 import LoadingScreen from './components/common/LoadingScreen';
 import ErrorBoundary from './components/common/ErrorBoundary';
 // Removed: import ShadowBanCheck from './components/investor/ShadowBanCheck'; // Removed investor-specific component
@@ -44,6 +46,7 @@ import AccountCreationRequests from './pages/governor/AccountCreationRequests';
 
 function App() {
   const { user, isLoading } = useAuth();
+  const { systemSettings, isPageAllowed, getRestrictionMessage } = useSystemControls();
   const [isPinAuthenticated, setIsPinAuthenticated] = useState(false);
   const [targetPath, setTargetPath] = useState<string>('/login');
   const location = useLocation();
