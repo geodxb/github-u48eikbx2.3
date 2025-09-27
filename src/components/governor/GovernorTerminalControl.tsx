@@ -30,6 +30,14 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
     messagingEnabled: true,
     profileUpdatesEnabled: true,
     loginEnabled: true,
+    tradingEnabled: true,
+    depositsEnabled: true,
+    reportingEnabled: true,
+    supportTicketsEnabled: true,
+    accountCreationEnabled: true,
+    dataExportEnabled: true,
+    notificationsEnabled: true,
+    apiAccessEnabled: true,
     restrictedMode: false,
     allowedPages: [] as string[],
     restrictionReason: '',
@@ -66,6 +74,14 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
           messagingEnabled: settings.systemControls?.messagingEnabled ?? true,
           profileUpdatesEnabled: settings.systemControls?.profileUpdatesEnabled ?? true,
           loginEnabled: settings.systemControls?.loginEnabled ?? true,
+          tradingEnabled: settings.systemControls?.tradingEnabled ?? true,
+          depositsEnabled: settings.systemControls?.depositsEnabled ?? true,
+          reportingEnabled: settings.systemControls?.reportingEnabled ?? true,
+          supportTicketsEnabled: settings.systemControls?.supportTicketsEnabled ?? true,
+          accountCreationEnabled: settings.systemControls?.accountCreationEnabled ?? true,
+          dataExportEnabled: settings.systemControls?.dataExportEnabled ?? true,
+          notificationsEnabled: settings.systemControls?.notificationsEnabled ?? true,
+          apiAccessEnabled: settings.systemControls?.apiAccessEnabled ?? true,
           restrictedMode: settings.systemControls?.restrictedMode ?? false,
           allowedPages: settings.systemControls?.allowedPages ?? [],
           restrictionReason: settings.systemControls?.restrictionReason ?? '',
@@ -206,6 +222,14 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
     addToHistory(`Messaging: ${restrictionConfig.messagingEnabled ? 'ENABLED' : 'DISABLED'}`);
     addToHistory(`Profile Updates: ${restrictionConfig.profileUpdatesEnabled ? 'ENABLED' : 'DISABLED'}`);
     addToHistory(`Login Access: ${restrictionConfig.loginEnabled ? 'ENABLED' : 'DISABLED'}`);
+    addToHistory(`Trading System: ${restrictionConfig.tradingEnabled ? 'ENABLED' : 'DISABLED'}`);
+    addToHistory(`Deposits: ${restrictionConfig.depositsEnabled ? 'ENABLED' : 'DISABLED'}`);
+    addToHistory(`Reporting: ${restrictionConfig.reportingEnabled ? 'ENABLED' : 'DISABLED'}`);
+    addToHistory(`Support Tickets: ${restrictionConfig.supportTicketsEnabled ? 'ENABLED' : 'DISABLED'}`);
+    addToHistory(`Account Creation: ${restrictionConfig.accountCreationEnabled ? 'ENABLED' : 'DISABLED'}`);
+    addToHistory(`Data Export: ${restrictionConfig.dataExportEnabled ? 'ENABLED' : 'DISABLED'}`);
+    addToHistory(`Notifications: ${restrictionConfig.notificationsEnabled ? 'ENABLED' : 'DISABLED'}`);
+    addToHistory(`API Access: ${restrictionConfig.apiAccessEnabled ? 'ENABLED' : 'DISABLED'}`);
     addToHistory(`Restricted Mode: ${restrictionConfig.restrictedMode ? 'ACTIVE' : 'INACTIVE'}`);
     addToHistory(`Restriction Level: ${restrictionConfig.restrictionLevel.toUpperCase()}`);
     if (restrictionConfig.restrictionReason) {
@@ -340,6 +364,14 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
           messagingEnabled: false,
           profileUpdatesEnabled: false,
           loginEnabled: false,
+          tradingEnabled: false,
+          depositsEnabled: false,
+          reportingEnabled: false,
+          supportTicketsEnabled: false,
+          accountCreationEnabled: false,
+          dataExportEnabled: false,
+          notificationsEnabled: false,
+          apiAccessEnabled: false,
           restrictedMode: true,
           allowedPages: ['/governor'],
           restrictionReason: 'Full system lockdown activated by Governor',
@@ -370,6 +402,14 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
           messagingEnabled: true,
           profileUpdatesEnabled: true,
           loginEnabled: true,
+          tradingEnabled: true,
+          depositsEnabled: true,
+          reportingEnabled: true,
+          supportTicketsEnabled: true,
+          accountCreationEnabled: true,
+          dataExportEnabled: true,
+          notificationsEnabled: true,
+          apiAccessEnabled: true,
           restrictedMode: false,
           allowedPages: [],
           restrictionReason: '',
@@ -529,44 +569,99 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
       {/* Restriction Configuration Modal */}
       {showRestrictionModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-black shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div 
+            className="bg-white border-2 w-full max-w-5xl max-h-[90vh] overflow-y-auto"
+            style={{
+              borderTopColor: '#ffffff',
+              borderLeftColor: '#ffffff',
+              borderRightColor: '#808080',
+              borderBottomColor: '#808080',
+              boxShadow: '4px 4px 8px rgba(0,0,0,0.3)'
+            }}
+          >
             {/* Modal Title Bar */}
-            <div className="px-4 py-2 bg-white border-b border-black flex justify-between items-center">
-              <h3 className="text-lg font-bold text-black">GOVERNOR SYSTEM RESTRICTION CONFIGURATION</h3>
+            <div 
+              className="px-4 py-2 bg-white border-b flex justify-between items-center"
+              style={{ borderBottomColor: '#808080' }}
+            >
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-white border border-black flex items-center justify-center">
+                  <span className="text-black text-xs font-bold">RC</span>
+                </div>
+                <h3 className="text-sm font-bold text-black">GOVERNOR SYSTEM RESTRICTION CONFIGURATION</h3>
+              </div>
               <button
                 onClick={() => setShowRestrictionModal(false)}
-                className="text-black hover:bg-gray-200 p-1"
+                className="text-black hover:bg-gray-200 p-1 border"
+                style={{
+                  borderTopColor: '#ffffff',
+                  borderLeftColor: '#ffffff',
+                  borderRightColor: '#808080',
+                  borderBottomColor: '#808080'
+                }}
               >
                 <span className="text-xl">×</span>
               </button>
             </div>
             
-            <div className="p-6 space-y-6">
+            <div className="p-4 space-y-4 bg-white font-mono text-xs">
               {/* Quick Actions */}
-              <div className="bg-gray-50 p-4 border border-gray-300">
-                <h4 className="font-bold text-gray-900 mb-4 uppercase tracking-wide">QUICK RESTRICTION ACTIONS</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div 
+                className="bg-gray-200 p-3 border"
+                style={{
+                  borderTopColor: '#808080',
+                  borderLeftColor: '#808080',
+                  borderRightColor: '#ffffff',
+                  borderBottomColor: '#ffffff'
+                }}
+              >
+                <h4 className="font-bold text-black mb-3 text-xs">QUICK RESTRICTION ACTIONS</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   <button
                     onClick={() => applyQuickRestriction('full_lockdown')}
-                    className="p-3 bg-red-600 text-white font-bold hover:bg-red-700 transition-colors border border-red-700 uppercase tracking-wide"
+                    className="p-2 bg-red-600 text-white font-bold hover:bg-red-700 transition-colors border text-xs"
+                    style={{
+                      borderTopColor: '#ffffff',
+                      borderLeftColor: '#ffffff',
+                      borderRightColor: '#800000',
+                      borderBottomColor: '#800000'
+                    }}
                   >
                     FULL LOCKDOWN
                   </button>
                   <button
                     onClick={() => applyQuickRestriction('disable_withdrawals')}
-                    className="p-3 bg-orange-600 text-white font-bold hover:bg-orange-700 transition-colors border border-orange-700 uppercase tracking-wide"
+                    className="p-2 bg-orange-600 text-white font-bold hover:bg-orange-700 transition-colors border text-xs"
+                    style={{
+                      borderTopColor: '#ffffff',
+                      borderLeftColor: '#ffffff',
+                      borderRightColor: '#804000',
+                      borderBottomColor: '#804000'
+                    }}
                   >
                     DISABLE WITHDRAWALS
                   </button>
                   <button
                     onClick={() => applyQuickRestriction('disable_messaging')}
-                    className="p-3 bg-purple-600 text-white font-bold hover:bg-purple-700 transition-colors border border-purple-700 uppercase tracking-wide"
+                    className="p-2 bg-purple-600 text-white font-bold hover:bg-purple-700 transition-colors border text-xs"
+                    style={{
+                      borderTopColor: '#ffffff',
+                      borderLeftColor: '#ffffff',
+                      borderRightColor: '#400080',
+                      borderBottomColor: '#400080'
+                    }}
                   >
                     DISABLE MESSAGING
                   </button>
                   <button
                     onClick={() => applyQuickRestriction('restore_all')}
-                    className="p-3 bg-green-600 text-white font-bold hover:bg-green-700 transition-colors border border-green-700 uppercase tracking-wide"
+                    className="p-2 bg-green-600 text-white font-bold hover:bg-green-700 transition-colors border text-xs"
+                    style={{
+                      borderTopColor: '#ffffff',
+                      borderLeftColor: '#ffffff',
+                      borderRightColor: '#008000',
+                      borderBottomColor: '#008000'
+                    }}
                   >
                     RESTORE ALL
                   </button>
@@ -574,20 +669,37 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
               </div>
 
               {/* Individual Controls */}
-              <div className="bg-gray-50 p-4 border border-gray-300">
-                <h4 className="font-bold text-gray-900 mb-4 uppercase tracking-wide">INDIVIDUAL FUNCTIONALITY CONTROLS</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
+              <div 
+                className="bg-gray-200 p-3 border"
+                style={{
+                  borderTopColor: '#808080',
+                  borderLeftColor: '#808080',
+                  borderRightColor: '#ffffff',
+                  borderBottomColor: '#ffffff'
+                }}
+              >
+                <h4 className="font-bold text-black mb-3 text-xs">INDIVIDUAL FUNCTIONALITY CONTROLS</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-3">
+                    <h5 className="font-bold text-black text-xs border-b border-gray-400 pb-1">CORE FUNCTIONS</h5>
                     <div className="flex items-center justify-between">
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1 uppercase tracking-wide">
+                        <label className="block text-xs font-bold text-black mb-1">
                           WITHDRAWAL SYSTEM
                         </label>
-                        <p className="text-xs text-gray-600 uppercase tracking-wide">
+                        <p className="text-xs text-gray-600">
                           {restrictionConfig.withdrawalsEnabled ? 'USERS CAN WITHDRAW FUNDS' : 'WITHDRAWALS BLOCKED'}
                         </p>
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
                         <input
                           type="checkbox"
                           checked={restrictionConfig.withdrawalsEnabled}
@@ -595,22 +707,29 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
                             ...prev,
                             withdrawalsEnabled: e.target.checked
                           }))}
-                          className="sr-only peer"
+                          className="w-3 h-3"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                      </label>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1 uppercase tracking-wide">
+                        <label className="block text-xs font-bold text-black mb-1">
                           MESSAGING SYSTEM
                         </label>
-                        <p className="text-xs text-gray-600 uppercase tracking-wide">
+                        <p className="text-xs text-gray-600">
                           {restrictionConfig.messagingEnabled ? 'MESSAGING ACTIVE' : 'MESSAGING DISABLED'}
                         </p>
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
                         <input
                           type="checkbox"
                           checked={restrictionConfig.messagingEnabled}
@@ -618,24 +737,29 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
                             ...prev,
                             messagingEnabled: e.target.checked
                           }))}
-                          className="sr-only peer"
+                          className="w-3 h-3"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                      </label>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1 uppercase tracking-wide">
+                        <label className="block text-xs font-bold text-black mb-1">
                           PROFILE UPDATES
                         </label>
-                        <p className="text-xs text-gray-600 uppercase tracking-wide">
+                        <p className="text-xs text-gray-600">
                           {restrictionConfig.profileUpdatesEnabled ? 'UPDATES ALLOWED' : 'UPDATES BLOCKED'}
                         </p>
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
                         <input
                           type="checkbox"
                           checked={restrictionConfig.profileUpdatesEnabled}
@@ -643,22 +767,29 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
                             ...prev,
                             profileUpdatesEnabled: e.target.checked
                           }))}
-                          className="sr-only peer"
+                          className="w-3 h-3"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                      </label>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1 uppercase tracking-wide">
+                        <label className="block text-xs font-bold text-black mb-1">
                           LOGIN ACCESS
                         </label>
-                        <p className="text-xs text-gray-600 uppercase tracking-wide">
+                        <p className="text-xs text-gray-600">
                           {restrictionConfig.loginEnabled ? 'LOGIN ALLOWED' : 'LOGIN BLOCKED'}
                         </p>
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
                         <input
                           type="checkbox"
                           checked={restrictionConfig.loginEnabled}
@@ -666,19 +797,272 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
                             ...prev,
                             loginEnabled: e.target.checked
                           }))}
-                          className="sr-only peer"
+                          className="w-3 h-3"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                      </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h5 className="font-bold text-black text-xs border-b border-gray-400 pb-1">TRADING & FINANCE</h5>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="block text-xs font-bold text-black mb-1">
+                          TRADING SYSTEM
+                        </label>
+                        <p className="text-xs text-gray-600">
+                          {restrictionConfig.tradingEnabled ? 'TRADING ACTIVE' : 'TRADING DISABLED'}
+                        </p>
+                      </div>
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={restrictionConfig.tradingEnabled}
+                          onChange={(e) => setRestrictionConfig(prev => ({
+                            ...prev,
+                            tradingEnabled: e.target.checked
+                          }))}
+                          className="w-3 h-3"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="block text-xs font-bold text-black mb-1">
+                          DEPOSIT SYSTEM
+                        </label>
+                        <p className="text-xs text-gray-600">
+                          {restrictionConfig.depositsEnabled ? 'DEPOSITS ALLOWED' : 'DEPOSITS BLOCKED'}
+                        </p>
+                      </div>
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={restrictionConfig.depositsEnabled}
+                          onChange={(e) => setRestrictionConfig(prev => ({
+                            ...prev,
+                            depositsEnabled: e.target.checked
+                          }))}
+                          className="w-3 h-3"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="block text-xs font-bold text-black mb-1">
+                          REPORTING SYSTEM
+                        </label>
+                        <p className="text-xs text-gray-600">
+                          {restrictionConfig.reportingEnabled ? 'REPORTS ACTIVE' : 'REPORTS DISABLED'}
+                        </p>
+                      </div>
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={restrictionConfig.reportingEnabled}
+                          onChange={(e) => setRestrictionConfig(prev => ({
+                            ...prev,
+                            reportingEnabled: e.target.checked
+                          }))}
+                          className="w-3 h-3"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="block text-xs font-bold text-black mb-1">
+                          ACCOUNT CREATION
+                        </label>
+                        <p className="text-xs text-gray-600">
+                          {restrictionConfig.accountCreationEnabled ? 'CREATION ALLOWED' : 'CREATION BLOCKED'}
+                        </p>
+                      </div>
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={restrictionConfig.accountCreationEnabled}
+                          onChange={(e) => setRestrictionConfig(prev => ({
+                            ...prev,
+                            accountCreationEnabled: e.target.checked
+                          }))}
+                          className="w-3 h-3"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h5 className="font-bold text-black text-xs border-b border-gray-400 pb-1">SUPPORT & ADMIN</h5>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="block text-xs font-bold text-black mb-1">
+                          SUPPORT TICKETS
+                        </label>
+                        <p className="text-xs text-gray-600">
+                          {restrictionConfig.supportTicketsEnabled ? 'TICKETS ACTIVE' : 'TICKETS DISABLED'}
+                        </p>
+                      </div>
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={restrictionConfig.supportTicketsEnabled}
+                          onChange={(e) => setRestrictionConfig(prev => ({
+                            ...prev,
+                            supportTicketsEnabled: e.target.checked
+                          }))}
+                          className="w-3 h-3"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="block text-xs font-bold text-black mb-1">
+                          DATA EXPORT
+                        </label>
+                        <p className="text-xs text-gray-600">
+                          {restrictionConfig.dataExportEnabled ? 'EXPORT ALLOWED' : 'EXPORT BLOCKED'}
+                        </p>
+                      </div>
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={restrictionConfig.dataExportEnabled}
+                          onChange={(e) => setRestrictionConfig(prev => ({
+                            ...prev,
+                            dataExportEnabled: e.target.checked
+                          }))}
+                          className="w-3 h-3"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="block text-xs font-bold text-black mb-1">
+                          NOTIFICATIONS
+                        </label>
+                        <p className="text-xs text-gray-600">
+                          {restrictionConfig.notificationsEnabled ? 'NOTIFICATIONS ON' : 'NOTIFICATIONS OFF'}
+                        </p>
+                      </div>
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={restrictionConfig.notificationsEnabled}
+                          onChange={(e) => setRestrictionConfig(prev => ({
+                            ...prev,
+                            notificationsEnabled: e.target.checked
+                          }))}
+                          className="w-3 h-3"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="block text-xs font-bold text-black mb-1">
+                          API ACCESS
+                        </label>
+                        <p className="text-xs text-gray-600">
+                          {restrictionConfig.apiAccessEnabled ? 'API ACTIVE' : 'API BLOCKED'}
+                        </p>
+                      </div>
+                      <div 
+                        className="relative inline-flex items-center cursor-pointer p-1 border bg-white"
+                        style={{
+                          borderTopColor: '#808080',
+                          borderLeftColor: '#808080',
+                          borderRightColor: '#ffffff',
+                          borderBottomColor: '#ffffff'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={restrictionConfig.apiAccessEnabled}
+                          onChange={(e) => setRestrictionConfig(prev => ({
+                            ...prev,
+                            apiAccessEnabled: e.target.checked
+                          }))}
+                          className="w-3 h-3"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Restriction Level */}
-              <div className="bg-gray-50 p-4 border border-gray-300">
-                <h4 className="font-bold text-gray-900 mb-4 uppercase tracking-wide">RESTRICTION LEVEL</h4>
-                <div className="flex space-x-4">
+              <div 
+                className="bg-gray-200 p-3 border"
+                style={{
+                  borderTopColor: '#808080',
+                  borderLeftColor: '#808080',
+                  borderRightColor: '#ffffff',
+                  borderBottomColor: '#ffffff'
+                }}
+              >
+                <h4 className="font-bold text-black mb-3 text-xs">RESTRICTION LEVEL</h4>
+                <div className="flex space-x-2">
                   {[
                     { key: 'none', label: 'NONE', color: 'bg-green-600' },
                     { key: 'partial', label: 'PARTIAL', color: 'bg-yellow-600' },
@@ -690,11 +1074,17 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
                         ...prev,
                         restrictionLevel: level.key as any
                       }))}
-                      className={`px-4 py-2 font-bold transition-colors uppercase tracking-wide border ${
+                      className={`px-3 py-2 font-bold transition-colors text-xs border ${
                         restrictionConfig.restrictionLevel === level.key
-                          ? `${level.color} text-white border-gray-900`
-                          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                          ? `${level.color} text-white`
+                          : 'bg-white text-black hover:bg-gray-100'
                       }`}
+                      style={restrictionConfig.restrictionLevel === level.key ? {} : {
+                        borderTopColor: '#ffffff',
+                        borderLeftColor: '#ffffff',
+                        borderRightColor: '#808080',
+                        borderBottomColor: '#808080'
+                      }}
                     >
                       {level.label}
                     </button>
@@ -703,50 +1093,93 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
               </div>
 
               {/* Restriction Reason */}
-              <div className="bg-gray-50 p-4 border border-gray-300">
-                <h4 className="font-bold text-gray-900 mb-4 uppercase tracking-wide">RESTRICTION REASON</h4>
+              <div 
+                className="bg-gray-200 p-3 border"
+                style={{
+                  borderTopColor: '#808080',
+                  borderLeftColor: '#808080',
+                  borderRightColor: '#ffffff',
+                  borderBottomColor: '#ffffff'
+                }}
+              >
+                <h4 className="font-bold text-black mb-3 text-xs">RESTRICTION REASON</h4>
                 <textarea
                   value={restrictionConfig.restrictionReason}
                   onChange={(e) => setRestrictionConfig(prev => ({
                     ...prev,
                     restrictionReason: e.target.value
                   }))}
-                  className="w-full px-4 py-3 border border-gray-300 focus:ring-1 focus:ring-gray-500 focus:border-gray-500 font-medium"
+                  className="w-full px-2 py-2 border font-mono text-xs"
+                  style={{
+                    borderTopColor: '#808080',
+                    borderLeftColor: '#808080',
+                    borderRightColor: '#ffffff',
+                    borderBottomColor: '#ffffff'
+                  }}
                   rows={3}
-                  placeholder="ENTER REASON FOR SYSTEM RESTRICTIONS..."
+                  placeholder="Enter reason for system restrictions..."
                 />
               </div>
 
               {/* Allowed Pages (for restricted mode) */}
-              <div className="bg-gray-50 p-4 border border-gray-300">
-                <h4 className="font-bold text-gray-900 mb-4 uppercase tracking-wide">ALLOWED PAGES (RESTRICTED MODE)</h4>
-                <div className="space-y-3">
-                  <div className="flex space-x-2">
+              <div 
+                className="bg-gray-200 p-3 border"
+                style={{
+                  borderTopColor: '#808080',
+                  borderLeftColor: '#808080',
+                  borderRightColor: '#ffffff',
+                  borderBottomColor: '#ffffff'
+                }}
+              >
+                <h4 className="font-bold text-black mb-3 text-xs">ALLOWED PAGES (RESTRICTED MODE)</h4>
+                <div className="space-y-2">
+                  <div className="flex space-x-1">
                     <input
                       type="text"
                       value={newAllowedPage}
                       onChange={(e) => setNewAllowedPage(e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 focus:ring-1 focus:ring-gray-500 focus:border-gray-500 font-medium"
+                      className="flex-1 px-2 py-1 border font-mono text-xs"
+                      style={{
+                        borderTopColor: '#808080',
+                        borderLeftColor: '#808080',
+                        borderRightColor: '#ffffff',
+                        borderBottomColor: '#ffffff'
+                      }}
                       placeholder="e.g., /admin/dashboard"
                     />
                     <button
                       onClick={addAllowedPage}
                       disabled={!newAllowedPage.trim()}
-                      className="px-4 py-2 bg-gray-900 text-white font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 uppercase tracking-wide"
+                      className="px-2 py-1 bg-gray-900 text-white font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 text-xs border"
+                      style={{
+                        borderTopColor: '#ffffff',
+                        borderLeftColor: '#ffffff',
+                        borderRightColor: '#000000',
+                        borderBottomColor: '#000000'
+                      }}
                     >
-                      ADD PAGE
+                      ADD
                     </button>
                   </div>
                   
                   {restrictionConfig.allowedPages.length > 0 && (
-                    <div className="space-y-2">
-                      <p className="text-sm font-bold text-gray-700 uppercase tracking-wide">CURRENTLY ALLOWED PAGES:</p>
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-black">CURRENTLY ALLOWED PAGES:</p>
                       {restrictionConfig.allowedPages.map((page, index) => (
-                        <div key={index} className="flex items-center justify-between bg-white p-2 border border-gray-300">
-                          <span className="font-mono text-sm text-gray-900">{page}</span>
+                        <div 
+                          key={index} 
+                          className="flex items-center justify-between bg-white p-1 border"
+                          style={{
+                            borderTopColor: '#808080',
+                            borderLeftColor: '#808080',
+                            borderRightColor: '#ffffff',
+                            borderBottomColor: '#ffffff'
+                          }}
+                        >
+                          <span className="font-mono text-xs text-black">{page}</span>
                           <button
                             onClick={() => removeAllowedPage(page)}
-                            className="text-red-600 hover:text-red-800 font-bold"
+                            className="text-red-600 hover:text-red-800 font-bold text-xs"
                           >
                             ×
                           </button>
@@ -758,16 +1191,28 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
               </div>
 
               {/* Apply Configuration */}
-              <div className="flex space-x-4">
+              <div className="flex space-x-2">
                 <button
                   onClick={() => setShowRestrictionModal(false)}
-                  className="flex-1 px-4 py-3 bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition-colors uppercase tracking-wide"
+                  className="flex-1 px-3 py-2 bg-white border text-black font-bold hover:bg-gray-100 transition-colors text-xs"
+                  style={{
+                    borderTopColor: '#ffffff',
+                    borderLeftColor: '#ffffff',
+                    borderRightColor: '#808080',
+                    borderBottomColor: '#808080'
+                  }}
                 >
                   CANCEL
                 </button>
                 <button
                   onClick={handleRestrictionSave}
-                  className="flex-1 px-4 py-3 bg-red-600 text-white font-bold hover:bg-red-700 transition-colors border border-red-700 uppercase tracking-wide"
+                  className="flex-1 px-3 py-2 bg-red-600 text-white font-bold hover:bg-red-700 transition-colors border text-xs"
+                  style={{
+                    borderTopColor: '#ffffff',
+                    borderLeftColor: '#ffffff',
+                    borderRightColor: '#800000',
+                    borderBottomColor: '#800000'
+                  }}
                 >
                   APPLY RESTRICTIONS
                 </button>
