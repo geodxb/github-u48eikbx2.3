@@ -196,17 +196,7 @@ const GovernorSystemControlsPage = () => {
 
       {/* Tab Content */}
       {activeTab === 'terminal' ? (
-        <div className="bg-white border border-gray-300 p-6">
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide">GOVERNOR CONTROL TERMINAL</h3>
-            <p className="text-gray-600 uppercase tracking-wide text-sm font-medium">
-              COMMAND-LINE INTERFACE FOR ADVANCED SYSTEM CONTROL
-            </p>
-          </div>
-          <div className="bg-gray-900 p-4 rounded-lg">
-            <GovernorTerminalControl />
-          </div>
-        </div>
+        <GovernorTerminalControl />
       ) : (
         <>
       {/* System Status Overview */}

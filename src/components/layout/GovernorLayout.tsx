@@ -59,7 +59,15 @@ const GovernorLayout = ({ children, title }: GovernorLayoutProps) => {
         ]
       },
       { text: 'MESSAGES', path: '/governor/messages' },
-      { text: 'CONFIGURATION', path: '/governor/config' }
+      { 
+        text: 'CONFIGURATION', 
+        path: '/governor/config',
+        hasDropdown: true,
+        dropdownItems: [
+          { text: 'System Configuration', path: '/governor/config' },
+          { text: 'Governor Control Terminal', path: '/governor/system-controls' }
+        ]
+      }
     ];
   };
 
