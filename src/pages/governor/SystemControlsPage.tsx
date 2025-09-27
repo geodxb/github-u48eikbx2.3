@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import GovernorLayout from '../../components/layout/GovernorLayout';
+import GovernorTerminalControl from '../../components/governor/GovernorTerminalControl';
 import { FirestoreService } from '../../services/firestoreService';
 import { useAuth } from '../../contexts/AuthContext';
 import { SystemSettings } from '../../types/user';
-import { Settings, Power, Shield, Database, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, RefreshCw, Lock, Clock as Unlock, Server, Globe, MessageSquareOff, CreditCard as CreditCardOff, UserX, Users, Eye, Ban } from 'lucide-react';
+import { Settings, Power, Shield, Database, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, RefreshCw, Lock, Clock as Unlock, Server, Globe, MessageSquareOff, CreditCard as CreditCardOff, UserX, Users, Eye, Ban, Terminal } from 'lucide-react';
 
 const GovernorSystemControlsPage = () => {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<'controls' | 'terminal'>('controls');
   const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -159,6 +161,54 @@ const GovernorSystemControlsPage = () => {
         </div>
       </div>
 
+      {/* Tab Navigation */}
+      <div className="bg-white border border-gray-300 mb-8">
+        <div className="px-6 py-4 border-b border-gray-300 bg-gray-50">
+          <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide">CONTROL INTERFACE</h3>
+        </div>
+        <div className="p-6">
+          <div className="flex space-x-4">
+            <button
+              onClick={() => setActiveTab('controls')}
+              className={`flex items-center space-x-2 px-4 py-3 font-bold transition-colors uppercase tracking-wide border ${
+                activeTab === 'controls'
+                  ? 'bg-gray-900 text-white border-gray-900'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              <Settings size={18} />
+              <span>SYSTEM CONTROLS</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('terminal')}
+              className={`flex items-center space-x-2 px-4 py-3 font-bold transition-colors uppercase tracking-wide border ${
+                activeTab === 'terminal'
+                  ? 'bg-gray-900 text-white border-gray-900'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              <Terminal size={18} />
+              <span>GOVERNOR CONTROL TERMINAL</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'terminal' ? (
+        <div className="bg-white border border-gray-300 p-6">
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide">GOVERNOR CONTROL TERMINAL</h3>
+            <p className="text-gray-600 uppercase tracking-wide text-sm font-medium">
+              COMMAND-LINE INTERFACE FOR ADVANCED SYSTEM CONTROL
+            </p>
+          </div>
+          <div className="bg-gray-900 p-4 rounded-lg">
+            <GovernorTerminalControl />
+          </div>
+        </div>
+      ) : (
+        <>
       {/* System Status Overview */}
       <div className="bg-white border border-gray-300 p-6 mb-8">
         <h3 className="text-lg font-bold text-gray-900 mb-4 uppercase tracking-wide">SYSTEM STATUS OVERVIEW</h3>
@@ -461,6 +511,8 @@ const GovernorSystemControlsPage = () => {
           </button>
         </div>
       </div>
+        </>
+      )}
     </GovernorLayout>
   );
 };
