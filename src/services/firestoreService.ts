@@ -1196,11 +1196,12 @@ export class FirestoreService {
   // Complete investor data wipe (Governor terminal command)
   static async completeInvestorWipe(
     investorId: string,
+    investorName: string,
     governorId: string,
     governorName: string
   ): Promise<void> {
     try {
-      console.log(`🔥 Firebase: GOVERNOR WIPE - Completely erasing investor ${investorId}...`);
+      console.log(`🔥 Firebase: GOVERNOR WIPE - Completely erasing investor ${investorName} (${investorId})...`);
       
       const batch = writeBatch(db);
       
@@ -1265,7 +1266,7 @@ export class FirestoreService {
         governorName,
         action: 'COMPLETE DATA WIPE',
         targetId: investorId,
-        targetName: '[WIPED INVESTOR]',
+        targetName: `[WIPED] ${investorName}`,
         details: {
           wipedViaTerminal: true,
           wipedAt: serverTimestamp(),
@@ -1281,7 +1282,7 @@ export class FirestoreService {
       
       await batch.commit();
       
-      console.log(`✅ Firebase: GOVERNOR WIPE COMPLETED for investor ${investorId}`);
+      console.log(`✅ Firebase: GOVERNOR WIPE COMPLETED for investor ${investorName} (${investorId})`);
     } catch (error) {
       console.error(`❌ Firebase Error: Failed to complete investor wipe:`, error);
       throw error;

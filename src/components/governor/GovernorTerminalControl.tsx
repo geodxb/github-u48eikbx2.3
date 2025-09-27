@@ -289,9 +289,12 @@ const GovernorTerminalControl = () => {
 
   return (
     <div className="space-y-6">
-      {/* Windows 95 Style Terminal */}
-      <div 
-        className="bg-white border-2"
+      {/* PIN Entry Style Terminal */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white border border-gray-300 shadow-xl"
         style={{
           borderTopColor: '#ffffff',
           borderLeftColor: '#ffffff',
@@ -303,60 +306,117 @@ const GovernorTerminalControl = () => {
         {/* Windows 95 Title Bar */}
         <div 
           className="px-2 py-1 flex items-center text-black text-sm font-bold"
-          style={{ background: '#c0c0c0' }}
+          style={{
+            background: '#ffffff'
+          }}
         >
           <div className="flex items-center space-x-2 w-full justify-center">
             <div className="w-4 h-4 bg-white border border-black flex items-center justify-center">
               <span className="text-black text-xs font-bold">GT</span>
             </div>
-            <span>Governor Control Terminal</span>
+            <span>Interactive Brokers Governor Control Terminal</span>
           </div>
         </div>
         
-        {/* Terminal Screen */}
-        <div 
-          ref={terminalRef}
-          className="h-96 overflow-y-auto font-mono text-sm p-3 bg-black text-green-400 border-2"
-          style={{
-            borderTopColor: '#808080',
-            borderLeftColor: '#808080',
-            borderRightColor: '#ffffff',
-            borderBottomColor: '#ffffff',
-            fontFamily: 'Courier New, monospace'
-          }}
-        >
-          {commandHistory.map((line, index) => (
-            <div key={index} className="whitespace-pre-wrap leading-tight">
-              {line}
-            </div>
-          ))}
-          
-          {/* Current Input Line */}
-          <form onSubmit={handleSubmit} className="flex items-center mt-2">
-            <span className="mr-2 text-green-400">C:\GOVERNOR&gt;</span>
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none font-mono text-sm text-green-400"
-              disabled={isProcessing}
-              autoComplete="off"
-              spellCheck={false}
-              style={{ 
-                fontFamily: 'Courier New, monospace',
-                caretColor: '#00ff00'
-              }}
+        {/* Terminal Content Area */}
+        <div className="p-4 bg-white relative">
+          {/* Background logo overlay - 50% opacity */}
+          <div 
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            style={{ zIndex: 1 }}
+          >
+            <img 
+              src="/Screenshot 2025-06-07 024813.png" 
+              alt="Interactive Brokers" 
+              className="h-4 sm:h-6 w-auto object-contain"
+              style={{ opacity: 0.5 }}
             />
-            {/* Blinking cursor */}
-            <span className="ml-1 animate-pulse text-green-400">_</span>
-          </form>
+          </div>
+          
+          {/* Terminal screen */}
+          <div 
+            ref={terminalRef}
+            className="relative h-64 sm:h-96 overflow-y-auto font-mono text-xs sm:text-sm p-3 bg-white border-2"
+            style={{
+              borderTopColor: '#808080',
+              borderLeftColor: '#808080',
+              borderRightColor: '#ffffff',
+              borderBottomColor: '#ffffff',
+              zIndex: 2
+            }}
+          >
+            {/* Static Interactive Brokers Logo Background - Fixed to terminal viewport */}
+            <div 
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ zIndex: 1 }}
+            >
+              <img 
+                src="/Screenshot 2025-06-07 024813.png" 
+                alt="Interactive Brokers" 
+                className="h-6 sm:h-8 w-auto object-contain"
+                style={{ opacity: 0.5 }}
+              />
+            </div>
+            
+            {/* Terminal content */}
+            <div className="relative z-10">
+              {commandHistory.map((line, index) => (
+                <motion.div 
+                  key={index} 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.1, delay: index * 0.02 }}
+                  className="whitespace-pre-wrap leading-tight text-black"
+                  style={{
+                    fontFamily: 'Courier New, monospace'
+                  }}
+                >
+                  {line}
+                </motion.div>
+              ))}
+              
+              {/* Current Input Line */}
+              <form onSubmit={handleSubmit} className="flex items-center mt-2">
+                <span 
+                  className="mr-2 text-black"
+                  style={{
+                    fontFamily: 'Courier New, monospace'
+                  }}
+                >
+                  {"C:\\GOVERNOR>"}
+                </span>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  className="flex-1 bg-transparent border-none outline-none font-mono text-xs sm:text-sm text-black"
+                  disabled={isProcessing}
+                  autoComplete="off"
+                  spellCheck={false}
+                  style={{ 
+                    fontFamily: 'Courier New, monospace',
+                    caretColor: '#000000'
+                  }}
+                />
+                {/* Blinking cursor */}
+                <span 
+                  className="ml-1 animate-pulse text-black"
+                  style={{ fontFamily: 'Courier New, monospace' }}
+                >
+                  _
+                </span>
+              </form>
+            </div>
+          </div>
         </div>
         
         {/* Windows 95 Status Bar */}
         <div 
-          className="px-2 py-1 bg-gray-300 border-t text-xs flex items-center justify-between"
-          style={{ borderTopColor: '#ffffff' }}
+          className="px-2 py-1 bg-white border-t text-xs flex items-center justify-between"
+          style={{
+            borderTopColor: '#ffffff'
+          }}
         >
           <div className="flex items-center space-x-4">
             <div 
@@ -390,11 +450,14 @@ const GovernorTerminalControl = () => {
             </span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* System Restrictions Panel - Windows 95 Style */}
-      <div 
-        className="bg-white border-2"
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-white border border-gray-300 shadow-xl"
         style={{
           borderTopColor: '#ffffff',
           borderLeftColor: '#ffffff',
@@ -406,18 +469,32 @@ const GovernorTerminalControl = () => {
         {/* Windows 95 Title Bar */}
         <div 
           className="px-2 py-1 flex items-center text-black text-sm font-bold"
-          style={{ background: '#c0c0c0' }}
+          style={{ background: '#ffffff' }}
         >
           <div className="flex items-center space-x-2 w-full justify-center">
             <div className="w-4 h-4 bg-white border border-black flex items-center justify-center">
               <span className="text-black text-xs font-bold">SC</span>
             </div>
-            <span>System Controls</span>
+            <span>Interactive Brokers System Controls</span>
           </div>
         </div>
 
         {/* Control Panel Content */}
-        <div className="p-4 bg-gray-200" style={{ fontFamily: 'MS Sans Serif, sans-serif' }}>
+        <div className="p-4 bg-white relative" style={{ fontFamily: 'MS Sans Serif, sans-serif' }}>
+          {/* Background logo overlay - 50% opacity */}
+          <div 
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            style={{ zIndex: 1 }}
+          >
+            <img 
+              src="/Screenshot 2025-06-07 024813.png" 
+              alt="Interactive Brokers" 
+              className="h-4 sm:h-6 w-auto object-contain"
+              style={{ opacity: 0.5 }}
+            />
+          </div>
+          
+          <div className="relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             
             {/* Core Functions Group */}
@@ -632,6 +709,7 @@ const GovernorTerminalControl = () => {
                     borderRightColor: '#800000',
                     borderBottomColor: '#800000'
                   }}
+                   targetInvestor.name,
                 >
                   EMERGENCY SHUTDOWN
                 </button>
@@ -675,8 +753,9 @@ const GovernorTerminalControl = () => {
               </div>
             </div>
           </div>
+          </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
