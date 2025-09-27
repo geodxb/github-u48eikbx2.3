@@ -6,7 +6,8 @@ import { EnhancedMessageService } from '../../services/enhancedMessageService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAvailableRecipients } from '../../hooks/useEnhancedMessages';
 import { ConversationMetadata } from '../../types/conversation';
-import { MessageSquare, Send, Users, Shield, Building, TriangleAlert as AlertTriangle, DollarSign, User, Crown } from 'lucide-react';
+import { MessageSquare, Send, Users, Shield, Building, AlertTriangle, DollarSign, User, Crown } from 'lucide-react';
+import FunctionalityGuard from '../../components/common/FunctionalityGuard';
 
 const EnhancedMessagesPage = () => {
   const { user } = useAuth();
@@ -152,6 +153,10 @@ const EnhancedMessagesPage = () => {
 
   return (
     <DashboardLayout title="Enhanced Messages">      
+      <FunctionalityGuard 
+        functionality="messaging"
+        fallbackMessage="Enhanced messaging system has been temporarily disabled by the Governor for security reasons."
+      >
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-[calc(100vh-120px)] flex">
         {/* Enhanced Conversation List */}
         <EnhancedConversationList
