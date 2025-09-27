@@ -214,6 +214,195 @@ const GovernorTerminalControl = () => {
         }
         break;
 
+      case 'lockdown':
+        if (!confirm('COMPLETE PLATFORM LOCKDOWN: This will disable ALL admin and investor access while preserving Governor access. Continue?')) {
+          addToHistory('Platform lockdown cancelled by Governor.');
+          break;
+        }
+        
+        addToHistory('');
+        addToHistory('INITIATING COMPLETE PLATFORM LOCKDOWN...');
+        addToHistory('Disabling all admin functions...');
+        addToHistory('Disabling all investor functions...');
+        addToHistory('Preserving Governor access...');
+        
+        try {
+          if (user && systemSettings) {
+            await FirestoreService.updateSystemControls({
+              withdrawalsEnabled: false,
+              messagingEnabled: false,
+              profileUpdatesEnabled: false,
+              loginEnabled: false,
+              tradingEnabled: false,
+              depositsEnabled: false,
+              reportingEnabled: false,
+              accountCreationEnabled: false,
+              supportTicketsEnabled: false,
+              dataExportEnabled: false,
+              notificationsEnabled: false,
+              apiAccessEnabled: false,
+              restrictedMode: true,
+              allowedPages: ['/governor', '/governor/*'],
+              restrictionReason: 'COMPLETE PLATFORM LOCKDOWN ACTIVATED BY GOVERNOR',
+              restrictionLevel: 'full'
+            }, user.id, user.name);
+            
+            addToHistory('PLATFORM LOCKDOWN COMPLETED.');
+            addToHistory('All admin and investor access disabled.');
+            addToHistory('Governor access preserved.');
+            await loadSystemSettings();
+          }
+        } catch (error) {
+          addToHistory('ERROR: Platform lockdown failed.');
+        }
+        break;
+
+      case 'unlock':
+        if (!confirm('UNLOCK ALL SYSTEMS: This will restore full platform access. Continue?')) {
+          addToHistory('System unlock cancelled by Governor.');
+          break;
+        }
+        
+        addToHistory('');
+        addToHistory('UNLOCKING ALL SYSTEMS...');
+        addToHistory('Restoring admin access...');
+        addToHistory('Restoring investor access...');
+        addToHistory('Enabling all functions...');
+        
+        try {
+          if (user && systemSettings) {
+            await FirestoreService.updateSystemControls({
+              withdrawalsEnabled: true,
+              messagingEnabled: true,
+              profileUpdatesEnabled: true,
+              loginEnabled: true,
+              tradingEnabled: true,
+              depositsEnabled: true,
+              reportingEnabled: true,
+              accountCreationEnabled: true,
+              supportTicketsEnabled: true,
+              dataExportEnabled: true,
+              notificationsEnabled: true,
+              apiAccessEnabled: true,
+              restrictedMode: false,
+              allowedPages: [],
+              restrictionReason: '',
+              restrictionLevel: 'none'
+            }, user.id, user.name);
+            
+            await FirestoreService.updateSystemSetting(
+              'maintenanceMode',
+              false,
+              user.id,
+              user.name,
+              systemSettings.maintenanceMode
+            );
+            
+            addToHistory('ALL SYSTEMS UNLOCKED.');
+            addToHistory('Full platform access restored.');
+            await loadSystemSettings();
+          }
+        } catch (error) {
+          addToHistory('ERROR: System unlock failed.');
+        }
+        break;
+
+      case 'restrict':
+        const restrictArgs = command.split(' ');
+        if (restrictArgs.length < 2) {
+          addToHistory('ERROR: Usage: restrict <level>');
+          addToHistory('Available levels: none, partial, full');
+          break;
+        }
+        
+        const level = restrictArgs[1].toLowerCase();
+        if (!['none', 'partial', 'full'].includes(level)) {
+          addToHistory('ERROR: Invalid restriction level.');
+          addToHistory('Available levels: none, partial, full');
+          break;
+        }
+        
+        addToHistory('');
+        addToHistory(`SETTING RESTRICTION LEVEL TO: ${level.toUpperCase()}`);
+        
+        try {
+          if (user && systemSettings) {
+            let controls = { ...systemSettings.systemControls };
+            
+            switch (level) {
+              case 'none':
+                controls = {
+                  ...controls,
+                  withdrawalsEnabled: true,
+                  messagingEnabled: true,
+                  profileUpdatesEnabled: true,
+                  loginEnabled: true,
+                  tradingEnabled: true,
+                  depositsEnabled: true,
+                  reportingEnabled: true,
+                  accountCreationEnabled: true,
+                  supportTicketsEnabled: true,
+                  dataExportEnabled: true,
+                  notificationsEnabled: true,
+                  apiAccessEnabled: true,
+                  restrictedMode: false,
+                  allowedPages: [],
+                  restrictionReason: '',
+                  restrictionLevel: 'none'
+                };
+                break;
+              case 'partial':
+                controls = {
+                  ...controls,
+                  withdrawalsEnabled: false,
+                  profileUpdatesEnabled: false,
+                  depositsEnabled: false,
+                  messagingEnabled: true,
+                  loginEnabled: true,
+                  tradingEnabled: true,
+                  reportingEnabled: true,
+                  accountCreationEnabled: true,
+                  supportTicketsEnabled: true,
+                  dataExportEnabled: true,
+                  notificationsEnabled: true,
+                  apiAccessEnabled: true,
+                  restrictedMode: true,
+                  allowedPages: ['/governor', '/admin'],
+                  restrictionReason: 'PARTIAL RESTRICTIONS APPLIED BY GOVERNOR',
+                  restrictionLevel: 'partial'
+                };
+                break;
+              case 'full':
+                controls = {
+                  ...controls,
+                  withdrawalsEnabled: false,
+                  messagingEnabled: false,
+                  profileUpdatesEnabled: false,
+                  loginEnabled: false,
+                  tradingEnabled: false,
+                  depositsEnabled: false,
+                  reportingEnabled: false,
+                  accountCreationEnabled: false,
+                  supportTicketsEnabled: false,
+                  dataExportEnabled: false,
+                  notificationsEnabled: false,
+                  apiAccessEnabled: false,
+                  restrictedMode: true,
+                  allowedPages: ['/governor'],
+                  restrictionReason: 'FULL PLATFORM LOCKDOWN BY GOVERNOR',
+                  restrictionLevel: 'full'
+                };
+                break;
+            }
+            
+            await FirestoreService.updateSystemControls(controls, user.id, user.name);
+            addToHistory(`RESTRICTION LEVEL SET TO: ${level.toUpperCase()}`);
+            await loadSystemSettings();
+          }
+        } catch (error) {
+          addToHistory(`ERROR: Failed to set restriction level to ${level}.`);
+        }
+        break;
       default:
         // Handle disable/enable commands
         if (cmd.startsWith('disable ')) {

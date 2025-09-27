@@ -105,18 +105,28 @@ export const useSystemControls = () => {
   };
 
   const isPageAllowed = (pagePath: string) => {
+    // Always allow Governor pages regardless of restrictions
+    if (pagePath.startsWith('/governor')) {
+      return true;
+    }
+    
     // If restricted mode is not active, allow all pages
     if (!systemSettings?.systemControls?.restrictedMode) {
       return true;
     }
     
-    // If restricted mode is active but no specific pages are restricted, allow all pages
-    if (!systemSettings.systemControls.allowedPages || systemSettings.systemControls.allowedPages.length === 0) {
-      return true;
+    // If restricted mode is active, check allowed pages
+    const allowedPages = systemSettings.systemControls.allowedPages || [];
+    
+    // If no allowed pages specified during restriction, block everything except Governor
+    if (allowedPages.length === 0) {
+      return false;
     }
     
-    const allowedPages = systemSettings.systemControls.allowedPages || [];
-    return allowedPages.some(allowedPath => pagePath.startsWith(allowedPath));
+    return allowedPages.some(allowedPath => 
+      pagePath.startsWith(allowedPath) || 
+      (allowedPath.endsWith('/*') && pagePath.startsWith(allowedPath.slice(0, -2)))
+    );
   };
 
   const getRestrictionMessage = () => {

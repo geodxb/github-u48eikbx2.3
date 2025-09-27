@@ -85,11 +85,11 @@ function App() {
   }
 
   // Check if current page is allowed during restricted mode
-  if (user && systemSettings?.systemControls?.restrictedMode && !isPageAllowed(location.pathname)) {
+  if (user && user.role !== 'governor' && systemSettings?.systemControls?.restrictedMode && !isPageAllowed(location.pathname)) {
     return (
       <FunctionalityGuard 
         functionality="apiAccess"
-        fallbackMessage="Platform access has been restricted by the Governor."
+        fallbackMessage={`Platform access has been restricted by the Governor. ${getRestrictionMessage()}`}
       >
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg border border-gray-300 shadow-xl p-8 max-w-md w-full text-center">
@@ -102,6 +102,16 @@ function App() {
           <p className="text-gray-700 mb-6 uppercase tracking-wide text-sm font-medium">
             {getRestrictionMessage()}
           </p>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <h4 className="font-bold text-red-800 mb-2 uppercase tracking-wide">SYSTEM STATUS</h4>
+            <div className="text-left text-sm space-y-1">
+              <p className="text-red-700">• Withdrawals: {isWithdrawalsEnabled() ? 'ENABLED' : 'DISABLED'}</p>
+              <p className="text-red-700">• Messaging: {isMessagingEnabled() ? 'ENABLED' : 'DISABLED'}</p>
+              <p className="text-red-700">• Trading: {isTradingEnabled() ? 'ENABLED' : 'DISABLED'}</p>
+              <p className="text-red-700">• Reports: {isReportingEnabled() ? 'ENABLED' : 'DISABLED'}</p>
+              <p className="text-red-700">• Login: {isLoginEnabled() ? 'ENABLED' : 'DISABLED'}</p>
+            </div>
+          </div>
           <button
             onClick={() => navigate(user.role === 'governor' ? '/governor' : '/admin')}
             className="px-6 py-3 bg-gray-900 text-white font-bold hover:bg-gray-800 transition-colors rounded-lg uppercase tracking-wide"
