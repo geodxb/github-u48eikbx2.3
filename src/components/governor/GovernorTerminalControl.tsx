@@ -75,6 +75,18 @@ const GovernorTerminalControl = () => {
         addToHistory('  enable <func>   - Enable system function');
         addToHistory('  emergency       - Emergency system shutdown');
         addToHistory('');
+        addToHistory('INVESTOR CONTROL:');
+        addToHistory('  list investors  - Show all investors');
+        addToHistory('  delete <name>   - Permanently delete investor');
+        addToHistory('  wipe <name>     - Complete data wipe (irreversible)');
+        addToHistory('  suspend <name>  - Suspend investor account');
+        addToHistory('  activate <name> - Activate investor account');
+        addToHistory('');
+        addToHistory('SYSTEM LOCKDOWN:');
+        addToHistory('  lockdown        - Complete platform lockdown');
+        addToHistory('  unlock          - Remove all restrictions');
+        addToHistory('  restrict <level> - Set restriction level (partial/full)');
+        addToHistory('');
         addToHistory('FUNCTIONS:');
         addToHistory('  withdrawals     - Withdrawal system');
         addToHistory('  messaging       - Messaging system');
