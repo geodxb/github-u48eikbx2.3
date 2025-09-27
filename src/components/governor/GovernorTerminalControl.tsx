@@ -6,7 +6,10 @@ import { FirestoreService } from '../../services/firestoreService';
 import { AccountClosureService } from '../../services/accountClosureService';
 import { useInvestors } from '../../hooks/useFirestore';
 import { SystemSettings } from '../../types/user';
-import { TriangleAlert as AlertTriangle } from 'lucide-react'onst { user } = useAuth();
+import { TriangleAlert as AlertTriangle } from 'lucide-react';
+
+const GovernorTerminalControl = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { investors } = useInvestors();
   const [input, setInput] = useState('');
