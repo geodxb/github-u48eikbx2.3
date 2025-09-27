@@ -14,6 +14,7 @@ import ProofOfTransferGenerator from '../../components/admin/ProofOfTransferGene
 import { useAuth } from '../../contexts/AuthContext';
 import WithdrawalProgressBar from '../../components/common/WithdrawalProgressBar';
 import { CircleCheck as CheckCircle, Circle as XCircle, ListFilter as Filter, Search, Calendar, DollarSign, User, Clock, TriangleAlert as AlertTriangle, X, FileText, Plus, Flag, Wallet } from 'lucide-react';
+import FunctionalityGuard from '../../components/common/FunctionalityGuard';
 
 type FilterStatus = 'all' | 'pending' | 'approved' | 'rejected';
 
@@ -389,6 +390,10 @@ const WithdrawalsPage = () => {
 
   return (
     <DashboardLayout title="Withdrawal Management">
+      <FunctionalityGuard 
+        functionality="withdrawals"
+        fallbackMessage="Withdrawal management has been temporarily disabled by the Governor for security reasons."
+      >
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
@@ -667,7 +672,6 @@ const WithdrawalsPage = () => {
           </div>
         )}
       </Modal>
-
       </FunctionalityGuard>
     </DashboardLayout>
   );
