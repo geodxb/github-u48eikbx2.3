@@ -633,22 +633,21 @@ const WithdrawalsPage = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Removed: Proof of Funds Modal */}
-      {/* Removed: {selectedProofWithdrawal && (
-        <ProofOfFundsForm
-          isOpen={proofOfFundsModalOpen}
-          onClose={() => {
-            setProofOfFundsModalOpen(false);
-            setSelectedProofWithdrawal(null);
-          }}
-          investor={selectedProofWithdrawal.investor}
-          withdrawal={selectedProofWithdrawal.withdrawal}
-        />
-      )} */}
+      <WithdrawalFlagModal
+        isOpen={showFlagModal}
+        onClose={() => {
+          setShowFlagModal(false);
+          setSelectedFlagWithdrawal(null);
+        }}
+        withdrawalId={selectedFlagWithdrawal?.id || ''}
+        withdrawalAmount={selectedFlagWithdrawal?.amount || 0}
+        investorName={selectedFlagWithdrawal?.investorName || ''}
+        onSuccess={() => {
+          setShowFlagModal(false);
+          setSelectedFlagWithdrawal(null);
+          refetch(); // Refresh withdrawal requests to show updated flags
+        }}
+      />
 
       {/* Proof of Transfer Modal */}
       <Modal
