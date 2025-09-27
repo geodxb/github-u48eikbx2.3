@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, CircleCheck as CheckCircle, Circle as XCircle, Send, Wallet, Building, TriangleAlert as AlertTriangle, DollarSign, Calendar, Shield, Hash, TrendingUp, FileText } from 'lucide-react';
+import { Clock, CircleCheck as CheckCircle, Circle as XCircle, Send, Wallet, Building, TriangleAlert as AlertTriangle, DollarSign, Calendar, Shield, Hash, TrendingUp, FileText, Flag } from 'lucide-react';
 
 interface WithdrawalProgressBarProps {
   withdrawalId: string;
@@ -13,6 +13,8 @@ interface WithdrawalProgressBarProps {
   investorName: string;
   rejectionReason?: string;
   withdrawalRequest?: any; // Full withdrawal request object
+  onPriorityRequest?: () => void;
+  showPriorityButton?: boolean;
 }
 
 const WithdrawalProgressBar = ({
@@ -25,7 +27,9 @@ const WithdrawalProgressBar = ({
   amount,
   investorName,
   rejectionReason,
-  withdrawalRequest
+  withdrawalRequest,
+  onPriorityRequest,
+  showPriorityButton = false
 }: WithdrawalProgressBarProps) => {
   const [currentStage, setCurrentStage] = useState(1);
   const [progressPercentage, setProgressPercentage] = useState(0);
@@ -338,6 +342,32 @@ const WithdrawalProgressBar = ({
             </div>
           </div>
         </div>
+
+        {/* Priority Request Section - Only show for pending/approved withdrawals */}
+        {showPriorityButton && onPriorityRequest && (currentStatus.toLowerCase() === 'pending' || currentStatus.toLowerCase() === 'approved') && (
+          <div className="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="flex items-start space-x-4">
+              <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Flag size={20} className="text-amber-600" />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-lg font-semibold text-amber-900 mb-2 uppercase tracking-wide">
+                  REQUEST PRIORITY PROCESSING
+                </h4>
+                <p className="text-amber-700 mb-4 uppercase tracking-wide text-sm">
+                  Submit a priority request to the Governor for expedited processing of this withdrawal.
+                </p>
+                <button
+                  onClick={onPriorityRequest}
+                  className="px-4 py-2 bg-amber-600 text-white font-bold hover:bg-amber-700 transition-colors rounded-lg uppercase tracking-wide border border-amber-700"
+                >
+                  <Flag size={16} className="mr-2 inline" />
+                  SUBMIT PRIORITY REQUEST
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Timeline Stages */}
         <div className="mt-6">

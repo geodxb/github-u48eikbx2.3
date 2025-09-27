@@ -558,6 +558,12 @@ const WithdrawalsPage = () => {
                   investorName={selectedProgressRequest.investorName}
                   rejectionReason={selectedProgressRequest.reason}
                   withdrawalRequest={selectedProgressRequest}
+                  onPriorityRequest={() => {
+                    setShowProgressModal(false);
+                    setSelectedFlagWithdrawal(selectedProgressRequest);
+                    setShowFlagModal(true);
+                  }}
+                  showPriorityButton={true}
                 />
               </div>
             </div>
