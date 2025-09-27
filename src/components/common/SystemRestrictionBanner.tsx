@@ -16,7 +16,10 @@ const SystemRestrictionBanner = ({ currentPage }: SystemRestrictionBannerProps) 
     getRestrictionLevel 
   } = useSystemControls();
 
-  if (!systemSettings?.systemControls?.restrictedMode) {
+  // Only show banner if there are actual restrictions in place
+  const hasRestrictions = !isWithdrawalsEnabled() || !isMessagingEnabled() || !isProfileUpdatesEnabled();
+  
+  if (!systemSettings?.systemControls?.restrictedMode || !hasRestrictions) {
     return null;
   }
 

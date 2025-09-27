@@ -304,7 +304,7 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
       addToHistory('[SUCCESS] System restrictions updated successfully');
       addToHistory('[BROADCAST] Pushing changes to all connected users...');
       addToHistory('[AUDIT] Restriction changes logged');
-      addToHistory('Configuration applied across all platform users.');
+      addToHistory(`Configuration applied: ${Object.entries(restrictionConfig).filter(([key, value]) => !value && key.includes('Enabled')).map(([key]) => key.replace('Enabled', '').toUpperCase()).join(', ')} disabled.`);
       addToHistory('');
       
       setShowRestrictionModal(false);

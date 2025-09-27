@@ -43,7 +43,13 @@ export const useSystemControls = () => {
   };
 
   const isPageAllowed = (pagePath: string) => {
+    // If restricted mode is not active, allow all pages
     if (!systemSettings?.systemControls?.restrictedMode) {
+      return true;
+    }
+    
+    // If restricted mode is active but no specific pages are restricted, allow all pages
+    if (!systemSettings.systemControls.allowedPages || systemSettings.systemControls.allowedPages.length === 0) {
       return true;
     }
     
