@@ -3,25 +3,7 @@ import GovernorLayout from '../../components/layout/GovernorLayout';
 import { FirestoreService } from '../../services/firestoreService';
 import { useAuth } from '../../contexts/AuthContext';
 import { SystemSettings } from '../../types/user';
-import { 
-  Settings, 
-  Power, 
-  Shield, 
-  Database, 
-  AlertTriangle, 
-  CheckCircle,
-  RefreshCw,
-  Lock,
-  Unlock,
-  Server,
-  Globe,
-  MessageSquareOff,
-  CreditCardOff,
-  UserX,
-  Users,
-  Eye,
-  Ban
-} from 'lucide-react';
+import { Settings, Power, Shield, Database, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, RefreshCw, Lock, Clock as Unlock, Server, Globe, MessageSquareOff, CreditCard as CreditCardOff, UserX, Users, Eye, Ban } from 'lucide-react';
 
 const GovernorSystemControlsPage = () => {
   const { user } = useAuth();
@@ -78,13 +60,6 @@ const GovernorSystemControlsPage = () => {
         }
       }
       
-      // Update system controls
-      await FirestoreService.updateSystemControls(
-        systemSettings.systemControls,
-        user.id,
-        user.name
-      );
-      
       setLastSaved(new Date());
       await loadSystemSettings();
     } catch (error) {
@@ -98,18 +73,6 @@ const GovernorSystemControlsPage = () => {
   const updateSetting = (field: keyof SystemSettings, value: any) => {
     if (systemSettings) {
       setSystemSettings(prev => prev ? { ...prev, [field]: value } : null);
-    }
-  };
-
-  const updateSystemControl = (field: keyof SystemSettings['systemControls'], value: any) => {
-    if (systemSettings) {
-      setSystemSettings(prev => prev ? {
-        ...prev,
-        systemControls: {
-          ...prev.systemControls,
-          [field]: value
-        }
-      } : null);
     }
   };
 

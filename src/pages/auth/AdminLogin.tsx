@@ -17,6 +17,13 @@ const AdminLogin = () => {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if login is enabled
+    if (!isLoginEnabled()) {
+      setError(`Login is currently disabled: ${getRestrictionMessage()}`);
+      return;
+    }
+    
     setError('');
     setIsLoading(true);
     

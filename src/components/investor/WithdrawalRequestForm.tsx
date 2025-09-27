@@ -6,24 +6,7 @@ import Modal from '../common/Modal';
 import { FirestoreService } from '../../services/firestoreService';
 import { useAuth } from '../../contexts/AuthContext';
 import { Investor, CryptoWallet } from '../../types/user';
-import { 
-  DollarSign, 
-  Building, 
-  Wallet, 
-  AlertTriangle, 
-  CheckCircle,
-  CreditCard,
-  Coins,
-  Network,
-  QrCode,
-  Eye,
-  ArrowRight,
-  Plus,
-  Info,
-  Globe,
-  TrendingUp,
-  RefreshCw
-} from 'lucide-react';
+import { DollarSign, Building, Wallet, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, CreditCard, Coins, Network, QrCode, Eye, ArrowRight, Plus, Info, Globe, TrendingUp, RefreshCw } from 'lucide-react';
 
 // Country to currency mapping
 const countryCurrencyMap: Record<string, string[]> = {
@@ -784,6 +767,7 @@ const WithdrawalRequestForm = ({ investor, onSuccess }: WithdrawalRequestFormPro
           </div>
         </Card>
       )}
+      </FunctionalityGuard>
       {/* Confirmation Modal */}
       <Modal
         isOpen={showConfirmModal}

@@ -668,6 +668,7 @@ const WithdrawalsPage = () => {
         )}
       </Modal>
 
+      </FunctionalityGuard>
     </DashboardLayout>
   );
 };

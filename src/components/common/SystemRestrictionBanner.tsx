@@ -1,15 +1,6 @@
 import { motion } from 'framer-motion';
 import { useSystemControls } from '../../hooks/useSystemControls';
-import { 
-  AlertTriangle, 
-  Shield, 
-  Lock, 
-  MessageSquareOff, 
-  CreditCardOff, 
-  UserX,
-  Settings,
-  Info
-} from 'lucide-react';
+import { TriangleAlert as AlertTriangle, Shield, Lock, MessageSquareOff, CreditCard as CreditCardOff, UserX, Settings, Info } from 'lucide-react';
 
 interface SystemRestrictionBannerProps {
   currentPage?: string;

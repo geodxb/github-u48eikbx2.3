@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { useSystemControls } from '../../hooks/useSystemControls';
-import { AlertTriangle, Lock, Shield } from 'lucide-react';
+import { TriangleAlert as AlertTriangle, Lock, Shield } from 'lucide-react';
 
 interface FunctionalityGuardProps {
   children: ReactNode;

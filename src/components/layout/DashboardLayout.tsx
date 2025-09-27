@@ -339,8 +339,13 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
           </div>
         )}
         
+        {/* System Restriction Banner */}
+        <div className="p-6 pb-0">
+          <SystemRestrictionBanner currentPage={location.pathname} />
+        </div>
+        
         {/* Page Content */}
-        <main className={`${announcements.length > 0 ? 'px-6 pb-6' : 'p-6'} flex-1 min-h-0`}>
+        <main className="px-6 pb-6 flex-1 min-h-0">
           {children}
         </main>
       </div>

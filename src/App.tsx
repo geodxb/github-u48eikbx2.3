@@ -79,6 +79,31 @@ function App() {
     return <LoadingScreen />;
   }
 
+  // Check if current page is allowed during restricted mode
+  if (user && systemSettings?.systemControls?.restrictedMode && !isPageAllowed(location.pathname)) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg border border-gray-300 shadow-xl p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-red-100 border border-red-300 rounded-lg flex items-center justify-center mx-auto mb-6">
+            <Lock size={32} className="text-red-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4 uppercase tracking-wide">
+            ACCESS RESTRICTED
+          </h1>
+          <p className="text-gray-700 mb-6 uppercase tracking-wide text-sm font-medium">
+            {getRestrictionMessage()}
+          </p>
+          <button
+            onClick={() => navigate(user.role === 'governor' ? '/governor' : '/admin')}
+            className="px-6 py-3 bg-gray-900 text-white font-bold hover:bg-gray-800 transition-colors rounded-lg uppercase tracking-wide"
+          >
+            RETURN TO DASHBOARD
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="App">
       <ErrorBoundary 
