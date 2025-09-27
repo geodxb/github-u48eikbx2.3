@@ -179,20 +179,33 @@ export class AnnouncementService {
   // Real-time listener for announcements
   static subscribeToAnnouncements(
     userRole: 'admin' | 'investor' | 'governor',
-    callback: (announcements: Announcement[]) => void
+    callback: (announcements: Announcement[]) => void,
+    errorCallback?: (error: Error) => void
   ): () => void {
     console.log('🔄 Setting up real-time listener for announcements for role:', userRole);
     
+    // Use a simpler query without orderBy to avoid index issues
     const announcementsQuery = query(
       collection(db, 'announcements'),
-      where('isActive', '==', true),
-      orderBy('createdAt', 'desc')
+      where('isActive', '==', true)
     );
     
     const unsubscribe = onSnapshot(
       announcementsQuery,
       (querySnapshot) => {
-        console.log('🔄 Announcements updated in real-time');
+        console.log('🔄 Raw announcements snapshot:', querySnapshot.docs.length, 'documents');
+        
+        querySnapshot.docs.forEach((doc, index) => {
+          const data = doc.data();
+          console.log(`📢 Raw announcement ${index + 1}:`, {
+            id: doc.id,
+            title: data.title,
+            targetRoles: data.targetRoles,
+            isActive: data.isActive,
+            type: data.type
+          });
+        });
+        
         const announcements = querySnapshot.docs.map(doc => {
           const data = doc.data();
           return {
@@ -208,6 +221,18 @@ export class AnnouncementService {
         // Filter by role and date range
         const now = new Date();
         const filteredAnnouncements = announcements.filter(announcement => {
+          console.log('📢 Filtering announcement:', {
+            id: announcement.id,
+            title: announcement.title,
+            targetRoles: announcement.targetRoles,
+            userRole,
+            isTargetRole: announcement.targetRoles.includes(userRole),
+            startDate: announcement.startDate,
+            endDate: announcement.endDate,
+            isInDateRange: (!announcement.startDate || announcement.startDate <= now) &&
+                          (!announcement.endDate || announcement.endDate >= now)
+          });
+          
           const isTargetRole = announcement.targetRoles.includes(userRole);
           const isInDateRange = (!announcement.startDate || announcement.startDate <= now) &&
                                (!announcement.endDate || announcement.endDate >= now);
@@ -225,10 +250,23 @@ export class AnnouncementService {
           return b.createdAt.getTime() - a.createdAt.getTime(); // Newer first
         });
         
+        console.log('📢 Final filtered announcements for', userRole, ':', filteredAnnouncements.length);
+        filteredAnnouncements.forEach((ann, index) => {
+          console.log(`📢 Final announcement ${index + 1}:`, {
+            id: ann.id,
+            title: ann.title,
+            targetRoles: ann.targetRoles,
+            priority: ann.priority
+          });
+        });
+        
         callback(filteredAnnouncements);
       },
       (error) => {
         console.error('❌ Real-time listener failed for announcements:', error);
+        if (errorCallback) {
+          errorCallback(error as Error);
+        }
         callback([]);
       }
     );

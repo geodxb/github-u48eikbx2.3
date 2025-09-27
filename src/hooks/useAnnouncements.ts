@@ -6,8 +6,17 @@ export const useAnnouncements = (userRole: 'admin' | 'investor' | 'governor' | n
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  console.log('📢 useAnnouncements called with role:', userRole);
+
   useEffect(() => {
-    if (!userRole || (userRole !== 'admin' && userRole !== 'investor' && userRole !== 'governor')) {
+    if (!userRole) {
+      console.log('📢 No user role provided, skipping announcements');
+      setLoading(false);
+      return;
+    }
+    
+    if (userRole !== 'admin' && userRole !== 'investor' && userRole !== 'governor') {
+      console.log('📢 Invalid user role:', userRole);
       setLoading(false);
       return;
     }
@@ -16,9 +25,23 @@ export const useAnnouncements = (userRole: 'admin' | 'investor' | 'governor' | n
     console.log('📢 Setting up announcements listener for role:', userRole);
     const unsubscribe = AnnouncementService.subscribeToAnnouncements(userRole, (updatedAnnouncements) => {
       console.log('📢 Announcements updated for role:', userRole, 'Count:', updatedAnnouncements.length);
+      updatedAnnouncements.forEach((ann, index) => {
+        console.log(`📢 Announcement ${index + 1}:`, {
+          id: ann.id,
+          title: ann.title,
+          targetRoles: ann.targetRoles,
+          isActive: ann.isActive,
+          type: ann.type,
+          priority: ann.priority
+        });
+      });
       setAnnouncements(updatedAnnouncements);
       setLoading(false);
       setError(null);
+    }, (error) => {
+      console.error('📢 Error in announcements listener:', error);
+      setError(error.message);
+      setLoading(false);
     });
 
     // Cleanup listener on unmount

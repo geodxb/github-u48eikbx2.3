@@ -6,7 +6,8 @@ import LanguageToggle from '../common/LanguageToggle';
 import AnnouncementBanner from '../common/AnnouncementBanner';
 import { useAnnouncements } from '../../hooks/useAnnouncements';
 import { Menu, X, LogOut, User, ChevronDown, Users, DollarSign, MessageSquare, MessageCircle, Circle as HelpCircle } from 'lucide-react';
-import { useAuth, UserRole } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { UserRole } from '../../types/user';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -24,9 +25,18 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const { user, logout, setGlobalLoading } = useAuth();
-  const { announcements } = useAnnouncements(user?.role || null);
+  const { announcements, loading: announcementsLoading, error: announcementsError } = useAnnouncements(user?.role || null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Debug announcements
+  console.log('🔍 DashboardLayout Debug:', {
+    userRole: user?.role,
+    announcementsCount: announcements.length,
+    announcementsLoading,
+    announcementsError,
+    announcements: announcements.map(a => ({ id: a.id, title: a.title, targetRoles: a.targetRoles, isActive: a.isActive }))
+  });
 
   // Show loading on navigation
   const handleNavigation = (path: string) => {
@@ -332,14 +342,31 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
       {/* Main Content */}
       <div className="bg-gray-50 min-h-screen flex flex-col pb-16 lg:pb-0">
         {/* Announcement Banners */}
-        {announcements.length > 0 && (
+        {!announcementsLoading && announcements.length > 0 && (
           <div className="p-6 pb-0">
+            <div className="mb-4 text-xs text-gray-500">
+              DEBUG: Showing {announcements.length} announcements for role: {user?.role}
+            </div>
             <AnnouncementBanner announcements={announcements} />
           </div>
         )}
         
+        {/* Debug info for announcements */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="p-6 pb-0">
+            <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg text-xs">
+              <strong>Announcements Debug:</strong><br/>
+              User Role: {user?.role || 'null'}<br/>
+              Loading: {announcementsLoading ? 'true' : 'false'}<br/>
+              Error: {announcementsError || 'none'}<br/>
+              Count: {announcements.length}<br/>
+              Announcements: {JSON.stringify(announcements.map(a => ({ id: a.id, title: a.title, targetRoles: a.targetRoles })), null, 2)}
+            </div>
+          </div>
+        )}
+        
         {/* Page Content */}
-        <main className={`${announcements.length > 0 ? 'px-6 pb-6' : 'p-6'} flex-1 min-h-0`}>
+        <main className={`${!announcementsLoading && announcements.length > 0 ? 'px-6 pb-6' : 'p-6'} flex-1 min-h-0`}>
           {children}
         </main>
       </div>
