@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
+import { useSystemControls } from '../../hooks/useSystemControls';
 import LanguageToggle from '../../components/common/LanguageToggle';
 import { Eye, EyeOff, User, Lock } from 'lucide-react';
 
@@ -14,6 +15,7 @@ const AdminLogin = () => {
   
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { isLoginEnabled, getRestrictionMessage } = useSystemControls();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
