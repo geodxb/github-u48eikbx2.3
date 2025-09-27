@@ -1193,39 +1193,42 @@ const GovernorTerminalControl = () => {
       </motion.div>
 
       {/* Move Balance Modal */}
-      <Modal
-        isOpen={showMoveBalanceModal}
-        onClose={() => setShowMoveBalanceModal(false)}
-        title="Transfer Investor Balance to Admin Commission"
-      >
-      >
-        <div className="p-4">
-          <p className="text-gray-600 mb-4">
-            Select an investor to transfer their balance to admin commission.
-          </p>
-          <div className="space-y-2">
-            {investors.filter(inv => inv.currentBalance > 0).map(investor => (
-              <div key={investor.id} className="p-3 border rounded-lg">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-semibold">{investor.name}</p>
-                    <p className="text-sm text-gray-500">Balance: ${investor.currentBalance.toLocaleString()}</p>
+      {showMoveBalanceModal && (
+        <Modal
+          isOpen={showMoveBalanceModal}
+          onClose={() => setShowMoveBalanceModal(false)}
+          title="Transfer Investor Balance to Admin Commission"
+        >
+          <div className="p-4">
+            <p className="text-gray-600 mb-4">
+              Select an investor to transfer their balance to admin commission.
+            </p>
+            <div className="space-y-2">
+              {investors.filter(inv => inv.currentBalance > 0).map(investor => (
+                <div key={investor.id} className="p-3 border rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-semibold">{investor.name}</p>
+                      <p className="text-sm text-gray-500">Balance: ${investor.currentBalance.toLocaleString()}</p>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle balance transfer logic here
+                        console.log('Transfer balance for:', investor.name);
+                        setShowMoveBalanceModal(false);
+                      }}
+                      className="px-3 py-1 bg-red-600 text-white rounded text-sm"
+                    >
+                      Transfer Balance
+                    </button>
                   </div>
-                  <button
-                    onClick={() => {
-                      // Handle balance transfer logic here
-                      console.log('Transfer balance for:', investor.name);
-                      setShowMoveBalanceModal(false);
-                    }}
-                    className="px-3 py-1 bg-red-600 text-white rounded text-sm"
-                  >
-                    Transfer Balance
-                  </button>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-      </Modal>
+        </Modal>
+      )}
     </div>
   );
 };
