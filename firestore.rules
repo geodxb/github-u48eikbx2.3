@@ -38,7 +38,9 @@ service cloud.firestore {
     
     // System Settings - Critical for app initialization
     match /systemSettings/{document} {
-      // All authenticated users can read (needed for maintenance mode checks)
+      // Allow unauthenticated read access to main system settings (needed for maintenance mode checks)
+      allow read: if document == 'main' || request.auth != null;
+      // All authenticated users can read other system settings
       allow read: if request.auth != null;
       // Only governor can write system settings
       allow write: if isGovernor();
