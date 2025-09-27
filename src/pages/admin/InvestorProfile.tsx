@@ -470,7 +470,7 @@ const InvestorProfile = () => {
                                 <p className="text-xs text-gray-600">
                                   {request.cryptoCoinType}: {request.cryptoWalletAddress.slice(0, 10)}...{request.cryptoWalletAddress.slice(-6)}
                                 </p>
-                              )}
+                              )
                               {request.reason && (
                                 <p className="text-xs text-gray-600">{request.reason}</p>
                               )}
