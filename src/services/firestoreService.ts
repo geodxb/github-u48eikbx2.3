@@ -1192,4 +1192,99 @@ export class FirestoreService {
       throw error;
     }
   }
+
+  // Complete investor data wipe (Governor terminal command)
+  static async completeInvestorWipe(
+    investorId: string,
+    governorId: string,
+    governorName: string
+  ): Promise<void> {
+    try {
+      console.log(`🔥 Firebase: GOVERNOR WIPE - Completely erasing investor ${investorId}...`);
+      
+      const batch = writeBatch(db);
+      
+      // Get all related data first
+      const [transactionsQuery, withdrawalsQuery, messagesQuery] = [
+        query(collection(db, 'transactions'), where('investorId', '==', investorId)),
+        query(collection(db, 'withdrawalRequests'), where('investorId', '==', investorId)),
+        query(collection(db, 'affiliateMessages'), where('senderId', '==', investorId))
+      ];
+      
+      const [transactionsSnapshot, withdrawalsSnapshot, messagesSnapshot] = await Promise.all([
+        getDocs(transactionsQuery),
+        getDocs(withdrawalsQuery),
+        getDocs(messagesQuery)
+      ]);
+      
+      // Delete all transactions
+      transactionsSnapshot.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      
+      // Delete all withdrawal requests
+      withdrawalsSnapshot.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      
+      // Delete all messages
+      messagesSnapshot.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      
+      // Update investor to wiped state
+      const investorRef = doc(db, 'users', investorId);
+      batch.update(investorRef, {
+        name: '[WIPED BY GOVERNOR]',
+        email: '[DELETED]',
+        phone: '[DELETED]',
+        country: '[DELETED]',
+        location: '[DELETED]',
+        currentBalance: 0,
+        initialDeposit: 0,
+        accountStatus: 'COMPLETELY WIPED BY GOVERNOR',
+        isActive: false,
+        accountFlags: {
+          governorWiped: true,
+          wipedAt: serverTimestamp(),
+          wipedBy: governorName,
+          wipedViaTerminal: true
+        },
+        bankDetails: {},
+        bankAccounts: [],
+        cryptoWallets: [],
+        tradingData: {},
+        verification: {},
+        updatedAt: serverTimestamp()
+      });
+      
+      // Log the wipe action
+      const auditRef = doc(collection(db, 'auditLogs'));
+      batch.set(auditRef, {
+        governorId,
+        governorName,
+        action: 'COMPLETE DATA WIPE',
+        targetId: investorId,
+        targetName: '[WIPED INVESTOR]',
+        details: {
+          wipedViaTerminal: true,
+          wipedAt: serverTimestamp(),
+          dataDestroyed: {
+            transactions: transactionsSnapshot.size,
+            withdrawals: withdrawalsSnapshot.size,
+            messages: messagesSnapshot.size
+          }
+        },
+        timestamp: serverTimestamp(),
+        createdAt: serverTimestamp()
+      });
+      
+      await batch.commit();
+      
+      console.log(`✅ Firebase: GOVERNOR WIPE COMPLETED for investor ${investorId}`);
+    } catch (error) {
+      console.error(`❌ Firebase Error: Failed to complete investor wipe:`, error);
+      throw error;
+    }
+  }
 }
