@@ -1298,4 +1298,4 @@ const GovernorTerminalControl = () => {
             </div>
           </div>
         </div>
-      )}
+      }
