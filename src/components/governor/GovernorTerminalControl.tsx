@@ -168,25 +168,6 @@ const GovernorTerminalControl = () => {
         break;
 
       case 'list':
-        if (args[1] === 'investors') {
-          addToHistory('');
-          addToHistory('INVESTOR ACCOUNTS:');
-          addToHistory('==================');
-          if (investors.length === 0) {
-            addToHistory('No investors found.');
-          } else {
-            investors.forEach((investor, index) => {
-              addToHistory(`${index + 1}. ${investor.name} (${investor.id.slice(-8)}) - ${investor.country} - $${investor.currentBalance.toLocaleString()}`);
-            });
-          }
-          addToHistory(`Total: ${investors.length} investors`);
-          addToHistory('');
-        } else {
-          addToHistory('ERROR: Usage: list investors');
-        }
-        break;
-
-      case 'delete':
         if (args.length < 2) {
           addToHistory('ERROR: Usage: delete <investor_name>');
           break;
