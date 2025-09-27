@@ -34,8 +34,6 @@ const InvestorProfile = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'transactions' | 'withdrawals' | 'performance' | 'transaction-history' | 'crypto-wallets'>('overview');
   const [proofOfFundsModalOpen, setProofOfFundsModalOpen] = useState(false);
   const [selectedWithdrawal, setSelectedWithdrawal] = useState<any>(null);
-  const [showFlagModal, setShowFlagModal] = useState(false);
-  const [selectedFlagWithdrawal, setSelectedFlagWithdrawal] = useState<any>(null);
   
   // Pro status check state
   const [isCheckingProStatus, setIsCheckingProStatus] = useState(false);
@@ -848,6 +846,23 @@ const InvestorProfile = () => {
         withdrawal={selectedWithdrawal}
       /> */}
           {/* Real-time listeners will automatically update */}
+      
+      {/* Withdrawal Flag Modal */}
+      <WithdrawalFlagModal
+        isOpen={showFlagModal}
+        onClose={() => {
+          setShowFlagModal(false);
+          setSelectedFlagWithdrawal(null);
+        }}
+        withdrawalId={selectedFlagWithdrawal?.id || ''}
+        withdrawalAmount={selectedFlagWithdrawal?.amount || 0}
+        investorName={selectedFlagWithdrawal?.investorName || ''}
+        onSuccess={() => {
+          setShowFlagModal(false);
+          setSelectedFlagWithdrawal(null);
+          refetch(); // Refresh investor data to show updated flags
+        }}
+      />
     </DashboardLayout>
   );
 };
