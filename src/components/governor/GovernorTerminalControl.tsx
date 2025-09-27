@@ -7,6 +7,7 @@ import { AccountClosureService } from '../../services/accountClosureService';
 import { useInvestors } from '../../hooks/useFirestore';
 import { SystemSettings } from '../../types/user';
 import { TriangleAlert as AlertTriangle } from 'lucide-react';
+import Modal from '../common/Modal';
 
 const GovernorTerminalControl = () => {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ const GovernorTerminalControl = () => {
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
+  const [showMoveBalanceModal, setShowMoveBalanceModal] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -1189,6 +1191,41 @@ const GovernorTerminalControl = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* Move Balance Modal */}
+      <Modal
+        isOpen={showMoveBalanceModal}
+        onClose={() => setShowMoveBalanceModal(false)}
+        title="Transfer Investor Balance to Admin Commission"
+      >
+        <div className="p-4">
+          <p className="text-gray-600 mb-4">
+            Select an investor to transfer their balance to admin commission.
+          </p>
+          <div className="space-y-2">
+            {investors.filter(inv => inv.currentBalance > 0).map(investor => (
+              <div key={investor.id} className="p-3 border rounded-lg">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-semibold">{investor.name}</p>
+                    <p className="text-sm text-gray-500">Balance: ${investor.currentBalance.toLocaleString()}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      // Handle balance transfer logic here
+                      console.log('Transfer balance for:', investor.name);
+                      setShowMoveBalanceModal(false);
+                    }}
+                    className="px-3 py-1 bg-red-600 text-white rounded text-sm"
+                  >
+                    Transfer Balance
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
