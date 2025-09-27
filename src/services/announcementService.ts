@@ -184,11 +184,8 @@ export class AnnouncementService {
   ): () => void {
     console.log('🔄 Setting up real-time listener for announcements for role:', userRole);
     
-    // Use a simpler query without orderBy to avoid index issues
-    const announcementsQuery = query(
-      collection(db, 'announcements'),
-      where('isActive', '==', true)
-    );
+    // Query all announcements without filters to avoid index issues
+    const announcementsQuery = collection(db, 'announcements');
     
     const unsubscribe = onSnapshot(
       announcementsQuery,
@@ -218,13 +215,14 @@ export class AnnouncementService {
           };
         }) as Announcement[];
         
-        // Filter by role and date range
+        // Filter by active status, role, and date range
         const now = new Date();
         const filteredAnnouncements = announcements.filter(announcement => {
           console.log('📢 Filtering announcement:', {
             id: announcement.id,
             title: announcement.title,
             targetRoles: announcement.targetRoles,
+            isActive: announcement.isActive,
             userRole,
             isTargetRole: announcement.targetRoles.includes(userRole),
             startDate: announcement.startDate,
@@ -233,10 +231,16 @@ export class AnnouncementService {
                           (!announcement.endDate || announcement.endDate >= now)
           });
           
+          // Must be active
+          const isActive = announcement.isActive === true;
           const isTargetRole = announcement.targetRoles.includes(userRole);
           const isInDateRange = (!announcement.startDate || announcement.startDate <= now) &&
                                (!announcement.endDate || announcement.endDate >= now);
-          return isTargetRole && isInDateRange;
+          
+          const shouldShow = isActive && isTargetRole && isInDateRange;
+          console.log('📢 Should show announcement:', shouldShow, { isActive, isTargetRole, isInDateRange });
+          
+          return shouldShow;
         }).sort((a, b) => {
           // Sort by priority first, then by creation date
           const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };

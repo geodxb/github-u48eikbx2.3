@@ -42,6 +42,11 @@ export const useAnnouncements = (userRole: 'admin' | 'investor' | 'governor' | n
       console.error('📢 Error in announcements listener:', error);
       setError(error.message);
       setLoading(false);
+    }, (error) => {
+      console.error('📢 Error in announcements listener:', error);
+      setError(error.message);
+      setLoading(false);
+      setAnnouncements([]);
     });
 
     // Cleanup listener on unmount

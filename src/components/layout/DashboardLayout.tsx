@@ -352,7 +352,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
         )}
         
         {/* Debug info for announcements */}
-        {process.env.NODE_ENV === 'development' && (
+        {true && (
           <div className="p-6 pb-0">
             <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg text-xs">
               <strong>Announcements Debug:</strong><br/>
@@ -360,6 +360,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
               Loading: {announcementsLoading ? 'true' : 'false'}<br/>
               Error: {announcementsError || 'none'}<br/>
               Count: {announcements.length}<br/>
+              Raw Announcements Data: {JSON.stringify(announcements, null, 2)}<br/>
               Announcements: {JSON.stringify(announcements.map(a => ({ id: a.id, title: a.title, targetRoles: a.targetRoles })), null, 2)}
             </div>
           </div>
