@@ -4,10 +4,8 @@ import Card from '../../components/common/Card';
 import Table from '../../components/common/Table';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
-// Removed: import WithdrawalRequestForm from '../../components/investor/WithdrawalRequestForm';
 import { FirestoreService } from '../../services/firestoreService';
 import { useWithdrawalRequests, useInvestors } from '../../hooks/useFirestore';
-// Removed: import ProofOfFundsForm from '../../components/investor/ProofOfFundsForm';
 import WithdrawalFlagModal from '../../components/admin/WithdrawalFlagModal';
 import { useWithdrawalFlags } from '../../hooks/useWithdrawalFlags';
 import ProofOfTransferGenerator from '../../components/admin/ProofOfTransferGenerator';
@@ -32,12 +30,10 @@ const WithdrawalsPage = () => {
   const [selectedW8BenRequest, setSelectedW8BenRequest] = useState<any>(null);
   const [w8benAction, setW8benAction] = useState<'approve' | 'reject'>('approve');
   const [w8benReason, setW8benReason] = useState('');
-  // Removed: const [proofOfFundsModalOpen, setProofOfFundsModalOpen] = useState(false);
-  // Removed: const [selectedProofWithdrawal, setSelectedProofWithdrawal] = useState<any>(null);
   const [showProofOfTransfer, setShowProofOfTransfer] = useState(false);
   const [selectedTransferProof, setSelectedTransferProof] = useState<any>(null);
-  const [showFlagModal, setShowFlagModal] = useState(false);
-  const [selectedFlagWithdrawal, setSelectedFlagWithdrawal] = useState<any>(null);
+  const [showPriorityRequestModal, setShowPriorityRequestModal] = useState(false);
+  const [selectedPriorityWithdrawal, setSelectedPriorityWithdrawal] = useState<any>(null);
 
   const filteredRequests = withdrawalRequests.filter(request => {
     const matchesStatus = filterStatus === 'all' || 
@@ -66,25 +62,6 @@ const WithdrawalsPage = () => {
     setSelectedProgressRequest(request);
     setShowProgressModal(true);
   };
-
-  // Removed: const handleOpenProofOfFunds = (request: any) => {
-  // Removed:   // Find the investor details for this request
-  // Removed:   const investor = getInvestorDetails(request.investorId);
-  // Removed:   if (investor) {
-  // Removed:     // Create a withdrawal object that matches the expected format
-  // Removed:     const withdrawalData = {
-  // Removed:       id: request.id,
-  // Removed:       amount: -request.amount, // Negative for withdrawal
-  // Removed:       date: request.date,
-  // Removed:       type: 'Withdrawal',
-  // Removed:       status: request.status,
-  // Removed:       description: `Withdrawal request #${request.id.slice(-8)}`
-  // Removed:     };
-  // Removed:     
-  // Removed:     setSelectedProofWithdrawal({ withdrawal: withdrawalData, investor });
-  // Removed:     setProofOfFundsModalOpen(true);
-  // Removed:   }
-  // Removed: };
 
   const handleW8BenAction = async () => {
     if (!selectedW8BenRequest) return;
@@ -118,11 +95,11 @@ const WithdrawalsPage = () => {
     {
       key: 'investorName',
       header: 'Investor',
-     align: 'center' as 'center',
+      align: 'center' as 'center',
       render: (value: string, row: any) => {
         const investor = getInvestorDetails(row.investorId);
         return (
-         <div className="space-y-1 text-center">
+          <div className="space-y-1 text-center">
             <p className="font-medium text-gray-900">{value}</p>
             <p className="text-xs text-gray-500">ID: {row.investorId.slice(-8)}</p>
             {investor && (
@@ -135,9 +112,9 @@ const WithdrawalsPage = () => {
     {
       key: 'amount',
       header: 'Amount',
-     align: 'center' as 'center',
+      align: 'center' as 'center',
       render: (value: number) => (
-       <div className="text-center">
+        <div className="text-center">
           <p className="font-medium text-gray-900">${value?.toLocaleString() || '0'}</p>
           <p className="text-xs text-gray-500">USD</p>
         </div>
@@ -146,11 +123,11 @@ const WithdrawalsPage = () => {
     {
       key: 'date',
       header: 'Date',
-     align: 'center' as 'center',
+      align: 'center' as 'center',
       render: (value: string) => {
         const date = new Date(value);
         return (
-         <div className="space-y-1 text-center">
+          <div className="space-y-1 text-center">
             <p className="text-sm text-gray-900">{date.toLocaleDateString()}</p>
             <p className="text-xs text-gray-500">{date.toLocaleDateString('en-US', { weekday: 'short' })}</p>
           </div>
@@ -160,14 +137,14 @@ const WithdrawalsPage = () => {
     {
       key: 'bankDetails',
       header: 'Destination',
-     align: 'center' as 'center',
+      align: 'center' as 'center',
       render: (_: any, row: any) => {
         // Check if this is a crypto withdrawal using the correct field
         if (row.type === 'crypto' || row.destinationDetails?.address) {
           return (
-           <div className="text-center">
+            <div className="text-center">
               <div className="space-y-1">
-               <div className="flex items-center justify-center space-x-2">
+                <div className="flex items-center justify-center space-x-2">
                   <Wallet size={14} className="text-purple-600" />
                   <p className="text-sm font-bold text-gray-900">
                     {row.destinationDetails?.coinType || row.cryptoCoinType || 'CRYPTO'}
@@ -207,7 +184,7 @@ const WithdrawalsPage = () => {
         }
         
         return (
-         <div className="text-center">
+          <div className="text-center">
             <div className="space-y-1">
               <p className="text-sm font-bold text-gray-900">
                 {bankInfo?.bankName || 'Bank Transfer'}
@@ -314,66 +291,38 @@ const WithdrawalsPage = () => {
               Track Progress
             </Button>
             
-            {/* Priority Request button for pending/approved withdrawals */}
-            {(row.status === 'Pending' || row.status === 'Approved') && (
+            {/* Proof of transfer button for credited withdrawals */}
+            {row.status === 'Credited' && (
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => {
-                  setSelectedFlagWithdrawal(row);
-                  setShowFlagModal(true);
+                  const investor = getInvestorDetails(row.investorId);
+                  if (investor) {
+                    const withdrawalData = {
+                      id: row.id,
+                      amount: -row.amount,
+                      date: row.date,
+                      type: 'Withdrawal',
+                      status: row.status,
+                      description: `Withdrawal request #${row.id.slice(-8)}`
+                    };
+                    setSelectedTransferProof({ withdrawal: withdrawalData, investor, withdrawalRequest: row });
+                    setShowProofOfTransfer(true);
+                  }
                 }}
-                className="w-full mb-2 border-amber-300 text-amber-700 hover:bg-amber-50"
+                className="w-full bg-gray-900 hover:bg-gray-800 text-white"
               >
-                <Flag size={14} className="mr-1" />
-                Priority Request
+                <FileText size={14} className="mr-1" />
+                Transfer Proof
               </Button>
             )}
             
-            {/* Proof of funds and transfer buttons for approved/credited withdrawals */}
-            {(row.status === 'Approved' || row.status === 'Credited') && (
-              <div className="space-y-1">
-                {/* Removed: <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleOpenProofOfFunds(row)}
-                  className="w-full"
-                >
-                  Generate Proof of Funds
-                </Button> */}
-                {row.status === 'Credited' && (
-                  <Button
-                    size="sm"
-                    variant="primary"
-                    onClick={() => {
-                      const investor = getInvestorDetails(row.investorId);
-                      if (investor) {
-                        const withdrawalData = {
-                          id: row.id,
-                          amount: -row.amount,
-                          date: row.date,
-                          type: 'Withdrawal',
-                          status: row.status,
-                          description: `Withdrawal request #${row.id.slice(-8)}`
-                        };
-                        setSelectedTransferProof({ withdrawal: withdrawalData, investor });
-                        setShowProofOfTransfer(true);
-                      }
-                    }}
-                    className="w-full bg-gray-900 hover:bg-gray-800"
-                  >
-                    Track Transfer
-                  </Button>
-                )}
-              </div>
-            )}
-            
             {/* Status text for processed requests */}
-            {row.status !== 'Pending' && row.status !== 'Approved' && (
+            {row.status !== 'Pending' && row.status !== 'Approved' && row.status !== 'Credited' && (
               <div className="text-center">
                 <span className="text-gray-500 text-xs">
                   {row.status === 'Rejected' ? 'Rejected' : 
-                   row.status === 'Credited' ? 'Completed' : 
                    row.status}
                 </span>
                 {row.reason && (
@@ -410,275 +359,292 @@ const WithdrawalsPage = () => {
         functionality="withdrawals"
         fallbackMessage="Withdrawal management has been temporarily disabled by the Governor for security reasons."
       >
-      <div className="mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">WITHDRAWAL MANAGEMENT</h2>
-            <p className="text-gray-600 uppercase tracking-wide text-sm">Monitor withdrawals and submit flag requests for Governor review</p>
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">WITHDRAWAL MANAGEMENT</h2>
+              <p className="text-gray-600 uppercase tracking-wide text-sm">Monitor withdrawals and submit priority requests for Governor review</p>
+            </div>
           </div>
         </div>
-      </div>
-      
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <Card className="bg-white border border-gray-200">
-          <div className="text-center">
-            <div className="text-2xl font-semibold text-gray-900 mb-1">{pendingCount}</div>
-            <div className="text-sm text-gray-600">Pending Governor Review</div>
-          </div>
-        </Card>
         
-        <Card className="bg-white border border-gray-200">
-          <div className="text-center">
-            <div className="text-2xl font-semibold text-gray-900 mb-1">${totalPendingAmount.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Total Pending</div>
-          </div>
-        </Card>
-        
-        <Card className="bg-white border border-gray-200">
-          <div className="text-center">
-            <div className="text-2xl font-semibold text-gray-900 mb-1">{approvedCount}</div>
-            <div className="text-sm text-gray-600">Governor Approved</div>
-          </div>
-        </Card>
-        
-        <Card className="bg-white border border-gray-200">
-          <div className="text-center">
-            <div className="text-2xl font-semibold text-gray-900 mb-1">{rejectedCount}</div>
-            <div className="text-sm text-gray-600">Rejected</div>
-          </div>
-        </Card>
-      </div>
-      
-      {/* Filters and Controls */}
-      <Card className="mb-6 bg-white border border-gray-200">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Filter size={16} className="text-gray-500" />
-              <span className="text-sm text-gray-700">Filter:</span>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <Card className="bg-white border border-gray-200">
+            <div className="text-center">
+              <div className="text-2xl font-semibold text-gray-900 mb-1">{pendingCount}</div>
+              <div className="text-sm text-gray-600">Pending Governor Review</div>
             </div>
-            <div className="flex space-x-1">
-              {[
-                { key: 'all', label: 'All', count: withdrawalRequests.length },
-                { key: 'pending', label: 'Pending', count: pendingCount },
-                { key: 'approved', label: 'Approved', count: approvedCount },
-                { key: 'rejected', label: 'Rejected', count: rejectedCount }
-              ].map(filter => (
-                <button
-                  key={filter.key}
-                  onClick={() => setFilterStatus(filter.key as FilterStatus)}
-                  className={`px-3 py-1 text-sm rounded transition-colors ${
-                    filterStatus === filter.key
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {filter.label} ({filter.count})
-                </button>
-              ))}
-            </div>
-          </div>
+          </Card>
           
-          <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by investor or amount..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 pr-4 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 w-64"
-            />
-          </div>
+          <Card className="bg-white border border-gray-200">
+            <div className="text-center">
+              <div className="text-2xl font-semibold text-gray-900 mb-1">${totalPendingAmount.toLocaleString()}</div>
+              <div className="text-sm text-gray-600">Total Pending</div>
+            </div>
+          </Card>
+          
+          <Card className="bg-white border border-gray-200">
+            <div className="text-center">
+              <div className="text-2xl font-semibold text-gray-900 mb-1">{approvedCount}</div>
+              <div className="text-sm text-gray-600">Governor Approved</div>
+            </div>
+          </Card>
+          
+          <Card className="bg-white border border-gray-200">
+            <div className="text-center">
+              <div className="text-2xl font-semibold text-gray-900 mb-1">{rejectedCount}</div>
+              <div className="text-sm text-gray-600">Rejected</div>
+            </div>
+          </Card>
         </div>
-      </Card>
-      
-      {/* Withdrawal Requests Table */}
-      <Card title={`Withdrawal Requests (${filteredRequests.length})`} className="bg-white border border-gray-200">
-        <Table 
-          columns={columns} 
-          data={filteredRequests}
-          isLoading={loading}
-          emptyMessage="No withdrawal requests found"
-        />
         
-        {!loading && filteredRequests.length > 0 && (
-          <div className="mt-4 p-4 bg-gray-50 border-t border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div>
-                <p className="text-gray-500">Showing Results</p>
-                <p className="font-medium text-gray-900">{filteredRequests.length} of {withdrawalRequests.length} requests</p>
+        {/* Filters and Controls */}
+        <Card className="mb-6 bg-white border border-gray-200">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Filter size={16} className="text-gray-500" />
+                <span className="text-sm text-gray-700">Filter:</span>
               </div>
-              <div>
-                <p className="text-gray-500">Total Amount (Filtered)</p>
-                <p className="font-medium text-gray-900">
-                  ${filteredRequests.reduce((sum, req) => sum + req.amount, 0).toLocaleString()}
-                </p>
+              <div className="flex space-x-1">
+                {[
+                  { key: 'all', label: 'All', count: withdrawalRequests.length },
+                  { key: 'pending', label: 'Pending', count: pendingCount },
+                  { key: 'approved', label: 'Approved', count: approvedCount },
+                  { key: 'rejected', label: 'Rejected', count: rejectedCount }
+                ].map(filter => (
+                  <button
+                    key={filter.key}
+                    onClick={() => setFilterStatus(filter.key as FilterStatus)}
+                    className={`px-3 py-1 text-sm rounded transition-colors ${
+                      filterStatus === filter.key
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {filter.label} ({filter.count})
+                  </button>
+                ))}
               </div>
-              <div>
-                <p className="text-gray-500">Pending Governor Review</p>
-                <p className="font-medium text-gray-900">
-                  {filteredRequests.filter(req => req.status === 'Pending').length}
-                </p>
+            </div>
+            
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by investor or amount..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-4 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 w-64"
+              />
+            </div>
+          </div>
+        </Card>
+        
+        {/* Withdrawal Requests Table */}
+        <Card title={`Withdrawal Requests (${filteredRequests.length})`} className="bg-white border border-gray-200">
+          <Table 
+            columns={columns} 
+            data={filteredRequests}
+            isLoading={loading}
+            emptyMessage="No withdrawal requests found"
+          />
+          
+          {!loading && filteredRequests.length > 0 && (
+            <div className="mt-4 p-4 bg-gray-50 border-t border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <p className="text-gray-500">Showing Results</p>
+                  <p className="font-medium text-gray-900">{filteredRequests.length} of {withdrawalRequests.length} requests</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Total Amount (Filtered)</p>
+                  <p className="font-medium text-gray-900">
+                    ${filteredRequests.reduce((sum, req) => sum + req.amount, 0).toLocaleString()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Pending Governor Review</p>
+                  <p className="font-medium text-gray-900">
+                    {filteredRequests.filter(req => req.status === 'Pending').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </Card>
+
+        {/* Progress Tracking Modal */}
+        {showProgressModal && selectedProgressRequest && (
+          <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50" onClick={() => setShowProgressModal(false)}>
+            <div className="flex min-h-screen items-start justify-center p-4 py-8">
+              <div 
+                className="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                  <h3 className="text-xl font-semibold text-gray-900 uppercase tracking-wide">
+                    WITHDRAWAL PROGRESS TRACKING
+                  </h3>
+                  <button
+                    onClick={() => setShowProgressModal(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X size={18} className="text-gray-500" />
+                  </button>
+                </div>
+                
+                <div className="p-6 overflow-y-auto">
+                  <WithdrawalProgressBar
+                    withdrawalId={selectedProgressRequest.id}
+                    submissionDate={selectedProgressRequest.date}
+                    currentStatus={selectedProgressRequest.status}
+                    approvalDate={selectedProgressRequest.processedAt && selectedProgressRequest.status === 'Approved' ? selectedProgressRequest.processedAt : null}
+                    creditDate={selectedProgressRequest.status === 'Credited' ? selectedProgressRequest.processedAt : null}
+                    rejectionDate={selectedProgressRequest.status === 'Rejected' ? selectedProgressRequest.processedAt : null}
+                    amount={selectedProgressRequest.amount}
+                    investorName={selectedProgressRequest.investorName}
+                    rejectionReason={selectedProgressRequest.reason}
+                    withdrawalRequest={selectedProgressRequest}
+                    onPriorityRequest={() => {
+                      setShowProgressModal(false);
+                      setSelectedPriorityWithdrawal(selectedProgressRequest);
+                      setShowPriorityRequestModal(true);
+                    }}
+                    showPriorityButton={true}
+                  />
+                </div>
               </div>
             </div>
           </div>
         )}
-      </Card>
 
-      {/* Progress Tracking Modal */}
-      {showProgressModal && selectedProgressRequest && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50" onClick={() => setShowProgressModal(false)}>
-          <div className="flex min-h-screen items-start justify-center p-4 py-8">
-            <div 
-              className="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                <h3 className="text-xl font-semibold text-gray-900 uppercase tracking-wide">
-                  WITHDRAWAL PROGRESS TRACKING
-                </h3>
-                <button
-                  onClick={() => setShowProgressModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X size={18} className="text-gray-500" />
-                </button>
-              </div>
-              
-              <div className="p-6 overflow-y-auto">
-                <WithdrawalProgressBar
-                  withdrawalId={selectedProgressRequest.id}
-                  submissionDate={selectedProgressRequest.date}
-                  currentStatus={selectedProgressRequest.status}
-                  approvalDate={selectedProgressRequest.processedAt && selectedProgressRequest.status === 'Approved' ? selectedProgressRequest.processedAt : null}
-                  creditDate={selectedProgressRequest.status === 'Credited' ? selectedProgressRequest.processedAt : null}
-                  rejectionDate={selectedProgressRequest.status === 'Rejected' ? selectedProgressRequest.processedAt : null}
-                  amount={selectedProgressRequest.amount}
-                  investorName={selectedProgressRequest.investorName}
-                  rejectionReason={selectedProgressRequest.reason}
-                  withdrawalRequest={selectedProgressRequest}
-                  onPriorityRequest={() => {
-                    setShowProgressModal(false);
-                    setSelectedFlagWithdrawal(selectedProgressRequest);
-                    setShowFlagModal(true);
-                  }}
-                  showPriorityButton={true}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* W-8 BEN Action Modal */}
-      {showW8BenModal && selectedW8BenRequest && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50" onClick={() => setShowW8BenModal(false)}>
-          <div className="flex min-h-screen items-center justify-center p-4">
-            <div 
-              className="relative w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {w8benAction === 'approve' ? 'Approve' : 'Reject'} W-8 BEN Form
-                </h3>
-                <button
-                  onClick={() => setShowW8BenModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X size={18} className="text-gray-500" />
-                </button>
-              </div>
-              
-              <div className="p-6">
-                <div className="space-y-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-gray-800 mb-2">Request Details</h4>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-gray-500">Investor</p>
-                        <p className="font-medium">{selectedW8BenRequest.investorName}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Amount</p>
-                        <p className="font-medium">${selectedW8BenRequest.amount.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">W-8 BEN Status</p>
-                        <p className="font-medium">{selectedW8BenRequest.w8benStatus}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Submitted</p>
-                        <p className="font-medium">
-                          {selectedW8BenRequest.w8benSubmittedAt?.toDate().toLocaleDateString() || 'N/A'}
-                        </p>
+        {/* W-8 BEN Action Modal */}
+        {showW8BenModal && selectedW8BenRequest && (
+          <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50" onClick={() => setShowW8BenModal(false)}>
+            <div className="flex min-h-screen items-center justify-center p-4">
+              <div 
+                className="relative w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {w8benAction === 'approve' ? 'Approve' : 'Reject'} W-8 BEN Form
+                  </h3>
+                  <button
+                    onClick={() => setShowW8BenModal(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X size={18} className="text-gray-500" />
+                  </button>
+                </div>
+                
+                <div className="p-6">
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-gray-800 mb-2">Request Details</h4>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="text-gray-500">Investor</p>
+                          <p className="font-medium">{selectedW8BenRequest.investorName}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Amount</p>
+                          <p className="font-medium">${selectedW8BenRequest.amount.toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">W-8 BEN Status</p>
+                          <p className="font-medium">{selectedW8BenRequest.w8benStatus}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Submitted</p>
+                          <p className="font-medium">
+                            {selectedW8BenRequest.w8benSubmittedAt?.toDate().toLocaleDateString() || 'N/A'}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {w8benAction === 'reject' && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Rejection Reason
-                      </label>
-                      <textarea
-                        value={w8benReason}
-                        onChange={(e) => setW8benReason(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        rows={3}
-                        placeholder="Explain why the W-8 BEN form is being rejected..."
-                      />
+                    {w8benAction === 'reject' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Rejection Reason
+                        </label>
+                        <textarea
+                          value={w8benReason}
+                          onChange={(e) => setW8benReason(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          rows={3}
+                          placeholder="Explain why the W-8 BEN form is being rejected..."
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex space-x-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setShowW8BenModal(false);
+                          setSelectedW8BenRequest(null);
+                          setW8benReason('');
+                        }}
+                        className="flex-1"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant={w8benAction === 'approve' ? 'primary' : 'danger'}
+                        onClick={handleW8BenAction}
+                        className="flex-1"
+                      >
+                        {w8benAction === 'approve' ? 'Approve Form' : 'Reject Form'}
+                      </Button>
                     </div>
-                  )}
-
-                  <div className="flex space-x-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setShowW8BenModal(false);
-                        setSelectedW8BenRequest(null);
-                        setW8benReason('');
-                      }}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant={w8benAction === 'approve' ? 'success' : 'danger'}
-                      onClick={handleW8BenAction}
-                      className="flex-1"
-                    >
-                      {w8benAction === 'approve' ? 'Approve Form' : 'Reject Form'}
-                    </Button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {showFlagModal && selectedFlagWithdrawal && (
+        {/* Proof of Transfer Modal */}
+        {showProofOfTransfer && selectedTransferProof && (
+          <Modal
+            isOpen={showProofOfTransfer}
+            onClose={() => {
+              setShowProofOfTransfer(false);
+              setSelectedTransferProof(null);
+            }}
+            title="PROOF OF WIRE TRANSFER"
+            size="xl"
+          >
+            <ProofOfTransferGenerator
+              investor={selectedTransferProof.investor}
+              withdrawal={selectedTransferProof.withdrawal}
+              withdrawalRequest={selectedTransferProof.withdrawalRequest}
+            />
+          </Modal>
+        )}
 
-      {/* Priority Request Modal */}
-      {showFlagModal && selectedFlagWithdrawal && (
-        <WithdrawalFlagModal
-          isOpen={showFlagModal}
-          onClose={() => {
-            setShowFlagModal(false);
-            setSelectedFlagWithdrawal(null);
-          }}
-          withdrawalId={selectedFlagWithdrawal.id}
-          withdrawalAmount={selectedFlagWithdrawal.amount}
-          investorName={selectedFlagWithdrawal.investorName}
-          onSuccess={() => {
-            setShowFlagModal(false);
-            setSelectedFlagWithdrawal(null);
-            refetch(); // Refresh withdrawal requests to show updated flags
-          }}
-        />
-      )}
+        {/* Priority Request Modal */}
+        {showPriorityRequestModal && selectedPriorityWithdrawal && (
+          <WithdrawalFlagModal
+            isOpen={showPriorityRequestModal}
+            onClose={() => {
+              setShowPriorityRequestModal(false);
+              setSelectedPriorityWithdrawal(null);
+            }}
+            withdrawalId={selectedPriorityWithdrawal.id}
+            withdrawalAmount={selectedPriorityWithdrawal.amount}
+            investorName={selectedPriorityWithdrawal.investorName}
+            onSuccess={() => {
+              setShowPriorityRequestModal(false);
+              setSelectedPriorityWithdrawal(null);
+              refetch(); // Refresh withdrawal requests to show updated priority requests
+            }}
+          />
+        )}
       </FunctionalityGuard>
     </DashboardLayout>
   );
