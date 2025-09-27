@@ -87,6 +87,7 @@ const GovernorTerminalControl = () => {
         addToHistory('  wipe <name>     - Complete data wipe (irreversible)');
         addToHistory('  suspend <name>  - Suspend investor account');
         addToHistory('  activate <name> - Activate investor account');
+        addToHistory('  movebalance     - Transfer investor balance to admin commission');
         addToHistory('');
         addToHistory('SYSTEM LOCKDOWN:');
         addToHistory('  lockdown        - Complete platform lockdown');
@@ -223,6 +224,15 @@ const GovernorTerminalControl = () => {
         } catch (error) {
           addToHistory('ERROR: Failed to create account closure request.');
         }
+        addToHistory('');
+        break;
+
+      case 'movebalance':
+        addToHistory('');
+        addToHistory('OPENING BALANCE TRANSFER INTERFACE...');
+        addToHistory('Loading investor accounts with available balance...');
+        setShowMoveBalanceModal(true);
+        addToHistory('Balance transfer modal opened.');
         addToHistory('');
         break;
 
