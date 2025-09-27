@@ -6,7 +6,8 @@ import { EnhancedMessageService } from '../../services/enhancedMessageService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAvailableRecipients } from '../../hooks/useEnhancedMessages';
 import { ConversationMetadata } from '../../types/conversation';
-import { MessageSquare, Send, Users, Shield, Building, TriangleAlert as AlertTriangle, DollarSign, User, Crown, RefreshCw } from 'lucide-react'nctionalityGuard from '../../components/common/FunctionalityGuard';
+import { MessageSquare, Send, Users, Shield, Building, TriangleAlert as AlertTriangle, DollarSign, User, Crown, RefreshCw } from 'lucide-react';
+import FunctionalityGuard from '../../components/common/FunctionalityGuard';
 
 const EnhancedMessagesPage = () => {
   const { user } = useAuth();
