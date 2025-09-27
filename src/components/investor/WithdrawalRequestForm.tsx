@@ -6,7 +6,26 @@ import Modal from '../common/Modal';
 import { FirestoreService } from '../../services/firestoreService';
 import { useAuth } from '../../contexts/AuthContext';
 import { Investor, CryptoWallet } from '../../types/user';
-import { DollarSign, Building, Wallet, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, CreditCard, Coins, Network, QrCode, Eye, ArrowRight, Plus, Info, Globe, TrendingUp, RefreshCw } from 'lucide-react';
+import { 
+  DollarSign, 
+  Building, 
+  Wallet, 
+  AlertTriangle, 
+  CheckCircle,
+  CreditCard,
+  Coins,
+  Network,
+  QrCode,
+  Eye,
+  ArrowRight,
+  Plus,
+  Info,
+  Globe,
+  TrendingUp,
+  RefreshCw,
+  Clock
+} from 'lucide-react';
+import FunctionalityGuard from '../common/FunctionalityGuard';
 
 // Country to currency mapping
 const countryCurrencyMap: Record<string, string[]> = {
@@ -122,6 +141,7 @@ const WithdrawalRequestForm = ({ investor, onSuccess }: WithdrawalRequestFormPro
       setSelectedBankAccount(legacyBankDetails);
     }
   }, [primaryBankAccount, legacyBankDetails]);
+  
   const validateAmount = () => {
     const numAmount = parseFloat(amount); // This is always in USD
     if (isNaN(numAmount) || numAmount <= 0) {
@@ -247,6 +267,10 @@ const WithdrawalRequestForm = ({ investor, onSuccess }: WithdrawalRequestFormPro
 
   return (
     <div className="space-y-6">
+      <FunctionalityGuard 
+        functionality="withdrawals"
+        fallbackMessage="Withdrawal functionality has been temporarily disabled by the system administrator for security reasons."
+      >
       <Card title="SUBMIT WITHDRAWAL REQUEST">
         <div className="space-y-6">
           {/* Account Balance Display */}
