@@ -4,7 +4,7 @@ import { TriangleAlert as AlertTriangle, Lock, Shield } from 'lucide-react';
 
 interface FunctionalityGuardProps {
   children: ReactNode;
-  functionality: 'withdrawals' | 'messaging' | 'profileUpdates';
+  functionality: 'withdrawals' | 'messaging' | 'profileUpdates' | 'trading' | 'deposits' | 'reporting' | 'accountCreation' | 'supportTickets' | 'dataExport' | 'notifications' | 'apiAccess';
   fallbackMessage?: string;
   showFallback?: boolean;
 }
@@ -19,6 +19,14 @@ const FunctionalityGuard = ({
     isWithdrawalsEnabled, 
     isMessagingEnabled, 
     isProfileUpdatesEnabled,
+    isTradingEnabled,
+    isDepositsEnabled,
+    isReportingEnabled,
+    isAccountCreationEnabled,
+    isSupportTicketsEnabled,
+    isDataExportEnabled,
+    isNotificationsEnabled,
+    isApiAccessEnabled,
     getRestrictionMessage,
     getRestrictionLevel 
   } = useSystemControls();
@@ -31,6 +39,22 @@ const FunctionalityGuard = ({
         return isMessagingEnabled();
       case 'profileUpdates':
         return isProfileUpdatesEnabled();
+      case 'trading':
+        return isTradingEnabled();
+      case 'deposits':
+        return isDepositsEnabled();
+      case 'reporting':
+        return isReportingEnabled();
+      case 'accountCreation':
+        return isAccountCreationEnabled();
+      case 'supportTickets':
+        return isSupportTicketsEnabled();
+      case 'dataExport':
+        return isDataExportEnabled();
+      case 'notifications':
+        return isNotificationsEnabled();
+      case 'apiAccess':
+        return isApiAccessEnabled();
       default:
         return true;
     }
@@ -44,6 +68,22 @@ const FunctionalityGuard = ({
         return 'MESSAGING SYSTEM';
       case 'profileUpdates':
         return 'PROFILE UPDATES';
+      case 'trading':
+        return 'TRADING SYSTEM';
+      case 'deposits':
+        return 'DEPOSIT SYSTEM';
+      case 'reporting':
+        return 'REPORTING SYSTEM';
+      case 'accountCreation':
+        return 'ACCOUNT CREATION';
+      case 'supportTickets':
+        return 'SUPPORT TICKETS';
+      case 'dataExport':
+        return 'DATA EXPORT';
+      case 'notifications':
+        return 'NOTIFICATIONS';
+      case 'apiAccess':
+        return 'API ACCESS';
       default:
         return 'FUNCTIONALITY';
     }
@@ -57,6 +97,22 @@ const FunctionalityGuard = ({
         return <Shield size={20} className="text-amber-600" />;
       case 'profileUpdates':
         return <AlertTriangle size={20} className="text-purple-600" />;
+      case 'trading':
+        return <Lock size={20} className="text-blue-600" />;
+      case 'deposits':
+        return <Lock size={20} className="text-green-600" />;
+      case 'reporting':
+        return <Lock size={20} className="text-indigo-600" />;
+      case 'accountCreation':
+        return <Lock size={20} className="text-orange-600" />;
+      case 'supportTickets':
+        return <Lock size={20} className="text-pink-600" />;
+      case 'dataExport':
+        return <Lock size={20} className="text-teal-600" />;
+      case 'notifications':
+        return <Lock size={20} className="text-cyan-600" />;
+      case 'apiAccess':
+        return <Lock size={20} className="text-violet-600" />;
       default:
         return <Lock size={20} className="text-gray-600" />;
     }

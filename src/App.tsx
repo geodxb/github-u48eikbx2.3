@@ -5,6 +5,7 @@ import { useAuth } from './contexts/AuthContext';
 import { useSystemControls } from './hooks/useSystemControls';
 import LoadingScreen from './components/common/LoadingScreen';
 import ErrorBoundary from './components/common/ErrorBoundary';
+import FunctionalityGuard from './components/common/FunctionalityGuard';
 // Removed: import ShadowBanCheck from './components/investor/ShadowBanCheck'; // Removed investor-specific component
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import PinEntryScreen from './pages/auth/PinEntryScreen';
@@ -86,6 +87,10 @@ function App() {
   // Check if current page is allowed during restricted mode
   if (user && systemSettings?.systemControls?.restrictedMode && !isPageAllowed(location.pathname)) {
     return (
+      <FunctionalityGuard 
+        functionality="apiAccess"
+        fallbackMessage="Platform access has been restricted by the Governor."
+      >
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg border border-gray-300 shadow-xl p-8 max-w-md w-full text-center">
           <div className="w-16 h-16 bg-red-100 border border-red-300 rounded-lg flex items-center justify-center mx-auto mb-6">
@@ -105,6 +110,7 @@ function App() {
           </button>
         </div>
       </div>
+      </FunctionalityGuard>
     );
   }
 

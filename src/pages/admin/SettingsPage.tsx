@@ -3,6 +3,7 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import { useAuth } from '../../contexts/AuthContext';
+import FunctionalityGuard from '../../components/common/FunctionalityGuard';
 import { 
   User, 
   Bell, 
@@ -426,6 +427,10 @@ const SettingsPage = () => {
 
   return (
     <DashboardLayout title="Settings">
+      <FunctionalityGuard 
+        functionality="profileUpdates"
+        fallbackMessage="Settings and profile updates have been temporarily disabled by the Governor for security reasons."
+      >
       <div className="mb-6">
         <div className="bg-white rounded-lg border border-gray-300 shadow-sm p-6">
           <h2 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">ADMIN SETTINGS</h2>
@@ -480,6 +485,7 @@ const SettingsPage = () => {
           )}
         </div>
       </div>
+      </FunctionalityGuard>
     </DashboardLayout>
   );
 };

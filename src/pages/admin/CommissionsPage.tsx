@@ -15,6 +15,7 @@ import {
   Building,
   Banknote
 } from 'lucide-react';
+import FunctionalityGuard from '../../components/common/FunctionalityGuard';
 
 type FilterPeriod = 'all' | 'today' | 'week' | 'month' | 'year';
 
@@ -225,6 +226,10 @@ const CommissionsPage = () => {
 
   return (
     <DashboardLayout title="Commission Tracking">
+      <FunctionalityGuard 
+        functionality="reporting"
+        fallbackMessage="Commission reporting has been temporarily disabled by the Governor for security reasons."
+      >
       {/* Summary Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card className="bg-white border border-gray-200">
@@ -457,6 +462,7 @@ const CommissionsPage = () => {
           setWithdrawalModalOpen(false);
         }}
       />
+      </FunctionalityGuard>
     </DashboardLayout>
   );
 };

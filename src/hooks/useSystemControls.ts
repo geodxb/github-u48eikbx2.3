@@ -56,6 +56,54 @@ export const useSystemControls = () => {
     return enabled;
   };
 
+  const isTradingEnabled = () => {
+    const enabled = systemSettings?.systemControls?.tradingEnabled !== false;
+    console.log('🔧 isTradingEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.tradingEnabled);
+    return enabled;
+  };
+
+  const isDepositsEnabled = () => {
+    const enabled = systemSettings?.systemControls?.depositsEnabled !== false;
+    console.log('🔧 isDepositsEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.depositsEnabled);
+    return enabled;
+  };
+
+  const isReportingEnabled = () => {
+    const enabled = systemSettings?.systemControls?.reportingEnabled !== false;
+    console.log('🔧 isReportingEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.reportingEnabled);
+    return enabled;
+  };
+
+  const isAccountCreationEnabled = () => {
+    const enabled = systemSettings?.systemControls?.accountCreationEnabled !== false;
+    console.log('🔧 isAccountCreationEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.accountCreationEnabled);
+    return enabled;
+  };
+
+  const isSupportTicketsEnabled = () => {
+    const enabled = systemSettings?.systemControls?.supportTicketsEnabled !== false;
+    console.log('🔧 isSupportTicketsEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.supportTicketsEnabled);
+    return enabled;
+  };
+
+  const isDataExportEnabled = () => {
+    const enabled = systemSettings?.systemControls?.dataExportEnabled !== false;
+    console.log('🔧 isDataExportEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.dataExportEnabled);
+    return enabled;
+  };
+
+  const isNotificationsEnabled = () => {
+    const enabled = systemSettings?.systemControls?.notificationsEnabled !== false;
+    console.log('🔧 isNotificationsEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.notificationsEnabled);
+    return enabled;
+  };
+
+  const isApiAccessEnabled = () => {
+    const enabled = systemSettings?.systemControls?.apiAccessEnabled !== false;
+    console.log('🔧 isApiAccessEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.apiAccessEnabled);
+    return enabled;
+  };
+
   const isPageAllowed = (pagePath: string) => {
     // If restricted mode is not active, allow all pages
     if (!systemSettings?.systemControls?.restrictedMode) {
@@ -87,6 +135,14 @@ export const useSystemControls = () => {
     isMessagingEnabled,
     isProfileUpdatesEnabled,
     isLoginEnabled,
+    isTradingEnabled,
+    isDepositsEnabled,
+    isReportingEnabled,
+    isAccountCreationEnabled,
+    isSupportTicketsEnabled,
+    isDataExportEnabled,
+    isNotificationsEnabled,
+    isApiAccessEnabled,
     isPageAllowed,
     getRestrictionMessage,
     getRestrictionLevel

@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useSystemControls } from '../../hooks/useSystemControls';
 import { NotificationService } from '../../services/notificationService';
 import { PushNotification } from '../../types/notification';
+import FunctionalityGuard from './FunctionalityGuard';
 import { 
   Bell, 
   X, 
@@ -19,6 +21,7 @@ import {
 const NotificationBell = () => {
   const { user } = useAuth();
   const { notifications, unreadCount } = useNotifications();
+  const { isNotificationsEnabled } = useSystemControls();
   const [isOpen, setIsOpen] = useState(false);
   const [displayedNotifications, setDisplayedNotifications] = useState<PushNotification[]>([]);
 
@@ -26,6 +29,11 @@ const NotificationBell = () => {
     // Show only recent notifications (last 20)
     setDisplayedNotifications(notifications.slice(0, 20));
   }, [notifications]);
+
+  // Don't render if notifications are disabled
+  if (!isNotificationsEnabled()) {
+    return null;
+  }
 
   const getNotificationIcon = (type: string) => {
     switch (type) {

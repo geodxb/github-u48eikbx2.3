@@ -5,6 +5,7 @@ import TradingViewChart from '../../components/common/TradingViewChart';
 import TradingViewTickerTape from '../../components/common/TradingViewTickerTape';
 import InvestorOnboardingFlow from '../../components/onboarding/InvestorOnboardingFlow';
 import { useInvestors, useWithdrawalRequests, useTransactions } from '../../hooks/useFirestore';
+import FunctionalityGuard from '../../components/common/FunctionalityGuard';
 import { 
   Settings,
   TrendingUp,
@@ -250,12 +251,18 @@ const AdminDashboard = () => {
                       Multi-step onboarding process with identity verification, banking details, and governor approval workflow
                     </p>
                     <p className="text-gray-600 text-xs mt-1">Recently updated</p>
+                    <FunctionalityGuard 
+                      functionality="accountCreation"
+                      fallbackMessage="Account creation disabled"
+                      showFallback={false}
+                    >
                     <button
                       onClick={() => setOnboardingFlowOpen(true)}
                       className="mt-2 px-3 py-1 bg-gray-900 text-white text-xs font-medium rounded hover:bg-gray-800 transition-colors uppercase tracking-wide"
                     >
                       Try New Onboarding
                     </button>
+                    </FunctionalityGuard>
                   </div>
                 </div>
               </div>
@@ -439,6 +446,10 @@ const AdminDashboard = () => {
       </div>
 
       {/* TradingView Chart Section - Moved to Bottom */}
+      <FunctionalityGuard 
+        functionality="trading"
+        fallbackMessage="Trading charts have been temporarily disabled by the Governor."
+      >
       <div className="mb-8">
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
           <div className="p-6">
@@ -456,7 +467,12 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+      </FunctionalityGuard>
 
+      <FunctionalityGuard 
+        functionality="trading"
+        fallbackMessage="Market ticker has been temporarily disabled by the Governor."
+      >
       {/* TradingView Ticker Tape Widget */}
       <div className="mb-8">
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
@@ -502,6 +518,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+      </FunctionalityGuard>
 
       {/* Investor Onboarding Flow */}
       <InvestorOnboardingFlow

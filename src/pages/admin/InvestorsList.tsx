@@ -7,6 +7,7 @@ import AddInvestorModal from '../../components/admin/AddInvestorModal';
 import InvestorOnboardingFlow from '../../components/onboarding/InvestorOnboardingFlow';
 import { useInvestors } from '../../hooks/useFirestore';
 import { useNavigate } from 'react-router-dom';
+import FunctionalityGuard from '../../components/common/FunctionalityGuard';
 
 const InvestorsListPage = () => {
   const navigate = useNavigate();
@@ -265,6 +266,11 @@ const InvestorsListPage = () => {
               <p className="text-gray-600 uppercase tracking-wide text-sm">Portfolio management and performance monitoring</p>
             </div>
             <div className="flex space-x-3">
+              <FunctionalityGuard 
+                functionality="accountCreation"
+                fallbackMessage="Account creation has been disabled by the Governor."
+                showFallback={false}
+              >
               <button
                 onClick={() => setOnboardingFlowOpen(true)}
                 className="px-4 py-2 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg uppercase tracking-wide"
@@ -277,6 +283,7 @@ const InvestorsListPage = () => {
               >
                 Quick Add (Legacy)
               </button>
+              </FunctionalityGuard>
             </div>
           </div>
         </div>
