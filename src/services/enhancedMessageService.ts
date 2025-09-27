@@ -1006,7 +1006,7 @@ export class EnhancedMessageService {
   // Get all available recipients for a user
   static async getAvailableRecipients(
     userId: string,
-    userRole: 'governor' | 'admin' // Removed 'affiliate'
+    userRole: 'governor' | 'admin' | 'affiliate' // Re-added 'affiliate' for compatibility
   ): Promise<Array<{
     id: string;
     name: string;
@@ -1020,23 +1020,33 @@ export class EnhancedMessageService {
     try {
       const recipients: any[] = [];
 
+      // Validate inputs
+      if (!userId || !userRole) {
+        console.warn('Invalid userId or userRole provided to getAvailableRecipients');
+        return [];
+      }
+
       if (userRole === 'admin' || userRole === 'governor') {
         // Add governors (management team)
-        const governorQuery = query(collection(db, 'users'), where('role', '==', 'governor'));
-        const governorSnapshot = await getDocs(governorQuery);
-        
-        governorSnapshot.docs.forEach(doc => {
-          const data = doc.data();
-          if (doc.id !== userId) { // Don't include self
-            recipients.push({
-              id: doc.id,
-              name: data.name,
-              role: 'governor',
-              email: data.email,
-              title: 'Management Team'
-            });
-          }
-        });
+        try {
+          const governorQuery = query(collection(db, 'users'), where('role', '==', 'governor'));
+          const governorSnapshot = await getDocs(governorQuery);
+          
+          governorSnapshot.docs.forEach(doc => {
+            const data = doc.data();
+            if (doc.id !== userId) { // Don't include self
+              recipients.push({
+                id: doc.id,
+                name: data.name || 'Governor',
+                role: 'governor',
+                email: data.email || '',
+                title: 'Management Team'
+              });
+            }
+          });
+        } catch (error) {
+          console.warn('Error fetching governors:', error);
+        }
 
         // Ensure Sam Hivanek is included
         const samExists = recipients.some(r => r.email === 'sam@interactivebrokers.us');
@@ -1051,49 +1061,68 @@ export class EnhancedMessageService {
         }
 
         // Add admins
-        const adminQuery = query(collection(db, 'users'), where('role', '==', 'admin'));
-        const adminSnapshot = await getDocs(adminQuery);
-        
-        adminSnapshot.docs.forEach(doc => {
-          const data = doc.data();
-          if (doc.id !== userId) {
-            recipients.push({
-              id: doc.id,
-              name: data.name,
-              role: 'admin',
-              email: data.email,
-              title: 'Admin Team'
-            });
-          }
-        });
+        try {
+          const adminQuery = query(collection(db, 'users'), where('role', '==', 'admin'));
+          const adminSnapshot = await getDocs(adminQuery);
+          
+          adminSnapshot.docs.forEach(doc => {
+            const data = doc.data();
+            if (doc.id !== userId) {
+              recipients.push({
+                id: doc.id,
+                name: data.name || 'Admin',
+                role: 'admin',
+                email: data.email || '',
+                title: 'Admin Team'
+              });
+            }
+          });
+        } catch (error) {
+          console.warn('Error fetching admins:', error);
+        }
 
         // Add investors (affiliates)
-        const investorQuery = query(collection(db, 'users'), where('role', '==', 'investor'));
-        const investorSnapshot = await getDocs(investorQuery);
-        
-        investorSnapshot.docs.forEach(doc => {
-          const data = doc.data();
-          recipients.push({
-            id: doc.id,
-            name: data.name,
-            role: 'investor', // Changed 'affiliate' to 'investor'
-            email: data.email,
-            country: data.country,
-            accountStatus: data.accountStatus,
-            currentBalance: data.currentBalance
+        try {
+          const investorQuery = query(collection(db, 'users'), where('role', '==', 'investor'));
+          const investorSnapshot = await getDocs(investorQuery);
+          
+          investorSnapshot.docs.forEach(doc => {
+            const data = doc.data();
+            recipients.push({
+              id: doc.id,
+              name: data.name || 'Investor',
+              role: 'investor', // Changed 'affiliate' to 'investor'
+              email: data.email || '',
+              country: data.country || '',
+              accountStatus: data.accountStatus || 'Active',
+              currentBalance: data.currentBalance || 0
+            });
           });
-        });
+        } catch (error) {
+          console.warn('Error fetching investors:', error);
+        }
       } else {
-        // This block should ideally not be reached if only admin/governor can log in
-        // If it were, it would be for an investor to message admin/governor
-        // For now, we'll keep it empty or throw an error if an investor somehow logs in
-        throw new Error('Invalid user role for fetching recipients');
+        // For affiliate/investor users, provide basic admin contact
+        recipients.push({
+          id: 'admin_fallback',
+          name: 'Admin Support',
+          role: 'admin',
+          email: 'support@interactivebrokers.com',
+          title: 'Support Team'
+        });
       }
 
       return recipients;
     } catch (error) {
       console.error('❌ Error fetching available recipients:', error);
-      return [];
+      // Return fallback recipients on error
+      return [{
+        id: 'admin_fallback',
+        name: 'Admin Support',
+        role: 'admin',
+        email: 'support@interactivebrokers.com',
+        title: 'Support Team'
+      }];
     }
   }
 }

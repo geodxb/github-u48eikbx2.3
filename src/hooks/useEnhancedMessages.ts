@@ -93,12 +93,13 @@ export const useAvailableRecipients = (userId: string, userRole: 'governor' | 'a
     const fetchRecipients = async () => {
       try {
         setLoading(true);
+        setError(null);
         const availableRecipients = await EnhancedMessageService.getAvailableRecipients(userId, userRole);
         setRecipients(availableRecipients);
-        setError(null);
       } catch (err) {
         console.error('Error fetching recipients:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch recipients');
+        setRecipients([]); // Set empty array on error
       } finally {
         setLoading(false);
       }
@@ -106,6 +107,9 @@ export const useAvailableRecipients = (userId: string, userRole: 'governor' | 'a
 
     if (userId && userRole) {
       fetchRecipients();
+    } else {
+      setLoading(false);
+      setRecipients([]);
     }
   }, [userId, userRole]);
 

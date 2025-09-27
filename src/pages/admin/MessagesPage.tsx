@@ -5,7 +5,8 @@ import MessageThread from '../../components/messaging/MessageThread';
 import { MessageService } from '../../services/messageService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useInvestors } from '../../hooks/useFirestore';
-import { MessageSquare, Send, Users, Shield, Building, AlertTriangle, DollarSign, User } from 'lucide-react';
+import { MessageSquare, Send, Users, Shield, Building, AlertTriangle, DollarSign, User, RefreshCw } from 'lucide-react';
+import FunctionalityGuard from '../../components/common/FunctionalityGuard';
 
 const MessagesPage = () => {
   const { user, setGlobalLoading } = useAuth();
@@ -16,6 +17,7 @@ const MessagesPage = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('general');
   const [newMessageContent, setNewMessageContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [messagingError, setMessagingError] = useState<string | null>(null);
 
   // Department options for Admin
   const departments = [
@@ -29,6 +31,7 @@ const MessagesPage = () => {
 
   // Get all possible recipients (all investors)
   const getAllRecipients = () => {
+    try {
     const recipients: any[] = [];
 
     // Add single Management Team option
@@ -55,6 +58,11 @@ const MessagesPage = () => {
     });
 
     return recipients;
+    } catch (error) {
+      console.error('Error getting recipients:', error);
+      setMessagingError('Failed to load message recipients');
+      return [];
+    }
   };
 
   // Auto-create or find conversation for investor users - REMOVED INVESTOR-SPECIFIC LOGIC
@@ -75,10 +83,11 @@ const MessagesPage = () => {
     
     // For admin users, require recipient selection
     if (user.role === 'admin' && !selectedRecipient) {
-      alert('Please select a recipient for your message');
+      setMessagingError('Please select a recipient for your message');
       return;
     }
 
+    setMessagingError(null);
     setIsLoading(true);
     
     try {
@@ -134,7 +143,7 @@ const MessagesPage = () => {
       setShowNewMessageForm(false);
     } catch (error) {
       console.error('❌ Error sending message:', error);
-      alert('Failed to send message. Please try again.');
+      setMessagingError('Failed to send message. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -146,6 +155,30 @@ const MessagesPage = () => {
         functionality="messaging"
         fallbackMessage="Messaging system has been temporarily disabled by the Governor for security reasons."
       >
+      {messagingError && (
+        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <AlertTriangle size={20} className="text-red-600" />
+              <div>
+                <h3 className="text-red-800 font-semibold">Messaging Error</h3>
+                <p className="text-red-700 text-sm">{messagingError}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                setMessagingError(null);
+                window.location.reload();
+              }}
+              className="px-3 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 transition-colors"
+            >
+              <RefreshCw size={14} className="mr-1 inline" />
+              Reload
+            </button>
+          </div>
+        </div>
+      )}
+      
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-[calc(100vh-120px)] flex">
         {/* Conversation List */}
         <ConversationList
@@ -267,7 +300,7 @@ const MessagesPage = () => {
                 <div className="flex justify-end">
                   <button
                     onClick={handleSendNewMessage}
-                    disabled={!newMessageContent.trim() || isLoading || (user?.role === 'admin' && !selectedRecipient)}
+                    disabled={!newMessageContent.trim() || isLoading || (user?.role === 'admin' && !selectedRecipient) || !!messagingError}
                     className="px-6 py-3 bg-gray-900 text-white font-medium hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors rounded-lg uppercase tracking-wide"
                   >
                     <Send size={16} className="mr-2 inline" />
