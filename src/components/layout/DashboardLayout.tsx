@@ -29,15 +29,6 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Debug announcements
-  console.log('🔍 DashboardLayout Debug:', {
-    userRole: user?.role,
-    announcementsCount: announcements.length,
-    announcementsLoading,
-    announcementsError,
-    announcements: announcements.map(a => ({ id: a.id, title: a.title, targetRoles: a.targetRoles, isActive: a.isActive }))
-  });
-
   // Show loading on navigation
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -342,32 +333,14 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
       {/* Main Content */}
       <div className="bg-gray-50 min-h-screen flex flex-col pb-16 lg:pb-0">
         {/* Announcement Banners */}
-        {!announcementsLoading && announcements.length > 0 && (
+        {announcements.length > 0 && (
           <div className="p-6 pb-0">
-            <div className="mb-4 text-xs text-gray-500">
-              DEBUG: Showing {announcements.length} announcements for role: {user?.role}
-            </div>
             <AnnouncementBanner announcements={announcements} />
           </div>
         )}
         
-        {/* Debug info for announcements */}
-        {true && (
-          <div className="p-6 pb-0">
-            <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg text-xs">
-              <strong>Announcements Debug:</strong><br/>
-              User Role: {user?.role || 'null'}<br/>
-              Loading: {announcementsLoading ? 'true' : 'false'}<br/>
-              Error: {announcementsError || 'none'}<br/>
-              Count: {announcements.length}<br/>
-              Raw Announcements Data: {JSON.stringify(announcements, null, 2)}<br/>
-              Announcements: {JSON.stringify(announcements.map(a => ({ id: a.id, title: a.title, targetRoles: a.targetRoles })), null, 2)}
-            </div>
-          </div>
-        )}
-        
         {/* Page Content */}
-        <main className={`${!announcementsLoading && announcements.length > 0 ? 'px-6 pb-6' : 'p-6'} flex-1 min-h-0`}>
+        <main className={`${announcements.length > 0 ? 'px-6 pb-6' : 'p-6'} flex-1 min-h-0`}>
           {children}
         </main>
       </div>
