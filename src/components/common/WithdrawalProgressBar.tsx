@@ -1181,11 +1181,6 @@ const WithdrawalProgressBar = ({
             </div>
           )}
         </div>
-
-        {/* MT103 Document Section - Only for credited bank withdrawals */}
-        {!isCryptoWithdrawal && currentStatus.toLowerCase() === 'credited' && investor && (
-          <MT103GeneratorDisplay />
-        )}
       </div>
     </div>
   );
