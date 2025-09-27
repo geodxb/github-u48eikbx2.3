@@ -4,21 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { FirestoreService } from '../../services/firestoreService';
 import { useSystemControls } from '../../hooks/useSystemControls';
 import { SystemSettings } from '../../types/user';
-import { 
-  TestTube, 
-  CheckCircle, 
-  XCircle, 
-  AlertTriangle,
-  Shield,
-  MessageSquareOff,
-  CreditCard,
-  UserX,
-  Lock,
-  Unlock,
-  RefreshCw,
-  Eye,
-  Settings
-} from 'lucide-react';
+import { TestTube, CircleCheck as CheckCircle, Circle as XCircle, TriangleAlert as AlertTriangle, Shield, MessageSquareOff, CreditCard, UserX, Lock, Clock as Unlock, RefreshCw, Eye, Settings } from 'lucide-react';
 
 const RestrictionTestingPanel = () => {
   const { user } = useAuth();
