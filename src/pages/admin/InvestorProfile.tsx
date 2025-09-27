@@ -34,6 +34,12 @@ const InvestorProfile = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'transactions' | 'withdrawals' | 'performance' | 'transaction-history' | 'crypto-wallets'>('overview');
   const [proofOfFundsModalOpen, setProofOfFundsModalOpen] = useState(false);
   const [selectedWithdrawal, setSelectedWithdrawal] = useState<any>(null);
+  const [showProgressModal, setShowProgressModal] = useState(false);
+  const [selectedProgressRequest, setSelectedProgressRequest] = useState<any>(null);
+  const [showFlagModal, setShowFlagModal] = useState(false);
+  const [selectedFlagWithdrawal, setSelectedFlagWithdrawal] = useState<any>(null);
+  const [showPriorityRequestModal, setShowPriorityRequestModal] = useState(false);
+  const [selectedPriorityWithdrawal, setSelectedPriorityWithdrawal] = useState<any>(null);
   
   // Pro status check state
   const [isCheckingProStatus, setIsCheckingProStatus] = useState(false);
