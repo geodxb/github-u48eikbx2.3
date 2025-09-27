@@ -1,14 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Announcement } from '../../services/announcementService';
-import { 
-  X, 
-  AlertTriangle, 
-  Info, 
-  Settings, 
-  Megaphone,
-  Clock
-} from 'lucide-react';
+import { X, TriangleAlert as AlertTriangle, Info, Settings, Megaphone, Clock } from 'lucide-react';
 
 interface AnnouncementBannerProps {
   announcements: Announcement[];

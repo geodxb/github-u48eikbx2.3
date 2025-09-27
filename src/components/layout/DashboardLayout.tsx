@@ -5,18 +5,7 @@ import NotificationBell from '../common/NotificationBell';
 import LanguageToggle from '../common/LanguageToggle';
 import AnnouncementBanner from '../common/AnnouncementBanner';
 import { useAnnouncements } from '../../hooks/useAnnouncements';
-import { 
-  Menu, 
-  X, 
-  LogOut, 
-  User,
-  ChevronDown,
-  Users,
-  DollarSign,
-  MessageSquare,
-  MessageCircle,
-  HelpCircle
-} from 'lucide-react';
+import { Menu, X, LogOut, User, ChevronDown, Users, DollarSign, MessageSquare, MessageCircle, Circle as HelpCircle } from 'lucide-react';
 import { useAuth, UserRole } from '../../contexts/AuthContext';
 
 interface DashboardLayoutProps {
