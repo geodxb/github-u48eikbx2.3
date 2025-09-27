@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import GovernorLayout from '../../components/layout/GovernorLayout';
 import GovernorTerminalControl from '../../components/governor/GovernorTerminalControl';
+import RestrictionTestingPanel from '../../components/governor/RestrictionTestingPanel';
 import { FirestoreService } from '../../services/firestoreService';
 import { useAuth } from '../../contexts/AuthContext';
 import { SystemSettings } from '../../types/user';
 import { Settings, Power, Shield, Database, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, RefreshCw, Lock, Clock as Unlock, Server, Globe, MessageSquareOff, CreditCard as CreditCardOff, UserX, Users, Eye, Ban, Terminal } from 'lucide-react';
+import { TestTube } from 'lucide-react';
 
 const GovernorSystemControlsPage = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'controls' | 'terminal'>('controls');
+  const [activeTab, setActiveTab] = useState<'controls' | 'terminal' | 'testing'>('controls');
   const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -190,6 +192,17 @@ const GovernorSystemControlsPage = () => {
               <Terminal size={18} />
               <span>GOVERNOR CONTROL TERMINAL</span>
             </button>
+            <button
+              onClick={() => setActiveTab('testing')}
+              className={`flex items-center space-x-2 px-4 py-3 font-bold transition-colors uppercase tracking-wide border ${
+                activeTab === 'testing'
+                  ? 'bg-gray-900 text-white border-gray-900'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              <TestTube size={18} />
+              <span>RESTRICTION TESTING</span>
+            </button>
           </div>
         </div>
       </div>
@@ -197,6 +210,8 @@ const GovernorSystemControlsPage = () => {
       {/* Tab Content */}
       {activeTab === 'terminal' ? (
         <GovernorTerminalControl />
+      ) : activeTab === 'testing' ? (
+        <RestrictionTestingPanel />
       ) : (
         <>
       {/* System Status Overview */}

@@ -8,11 +8,17 @@ export const useSystemControls = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('🔧 useSystemControls: Setting up real-time listener for systemSettings/main...');
     // Set up real-time listener for system settings
-    console.log('🔄 Setting up real-time listener for system controls...');
     
     const unsubscribe = FirestoreService.subscribeToSystemSettings((settings) => {
-      console.log('🔄 System controls updated:', settings?.systemControls);
+      console.log('🔧 System controls updated from Firebase:', {
+        maintenanceMode: settings?.maintenanceMode,
+        systemControls: settings?.systemControls,
+        restrictionLevel: settings?.systemControls?.restrictionLevel,
+        updatedBy: settings?.updatedBy,
+        updatedAt: settings?.updatedAt
+      });
       setSystemSettings(settings);
       setLoading(false);
       setError(null);
@@ -27,19 +33,27 @@ export const useSystemControls = () => {
 
   // Helper functions to check specific restrictions
   const isWithdrawalsEnabled = () => {
-    return systemSettings?.systemControls?.withdrawalsEnabled !== false;
+    const enabled = systemSettings?.systemControls?.withdrawalsEnabled !== false;
+    console.log('🔧 isWithdrawalsEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.withdrawalsEnabled);
+    return enabled;
   };
 
   const isMessagingEnabled = () => {
-    return systemSettings?.systemControls?.messagingEnabled !== false;
+    const enabled = systemSettings?.systemControls?.messagingEnabled !== false;
+    console.log('🔧 isMessagingEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.messagingEnabled);
+    return enabled;
   };
 
   const isProfileUpdatesEnabled = () => {
-    return systemSettings?.systemControls?.profileUpdatesEnabled !== false;
+    const enabled = systemSettings?.systemControls?.profileUpdatesEnabled !== false;
+    console.log('🔧 isProfileUpdatesEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.profileUpdatesEnabled);
+    return enabled;
   };
 
   const isLoginEnabled = () => {
-    return systemSettings?.systemControls?.loginEnabled !== false;
+    const enabled = systemSettings?.systemControls?.loginEnabled !== false;
+    console.log('🔧 isLoginEnabled check:', enabled, 'Firebase value:', systemSettings?.systemControls?.loginEnabled);
+    return enabled;
   };
 
   const isPageAllowed = (pagePath: string) => {

@@ -109,6 +109,9 @@ const FunctionalityGuard = ({
             <span className="px-2 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-800 uppercase tracking-wide">
               GOVERNOR CONTROL
             </span>
+            <span className="px-2 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-800 uppercase tracking-wide">
+              FIREBASE: systemSettings/main
+            </span>
           </div>
         </div>
       </div>
