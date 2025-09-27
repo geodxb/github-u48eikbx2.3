@@ -136,6 +136,14 @@ const GovernorTerminalControl = () => {
           if (controls.messagingEnabled === false) restrictions.push('MESSAGING DISABLED');
           if (controls.profileUpdatesEnabled === false) restrictions.push('PROFILE UPDATES DISABLED');
           if (controls.loginEnabled === false) restrictions.push('LOGIN DISABLED');
+          if (controls.tradingEnabled === false) restrictions.push('TRADING DISABLED');
+          if (controls.depositsEnabled === false) restrictions.push('DEPOSITS DISABLED');
+          if (controls.reportingEnabled === false) restrictions.push('REPORTING DISABLED');
+          if (controls.accountCreationEnabled === false) restrictions.push('ACCOUNT CREATION DISABLED');
+          if (controls.supportTicketsEnabled === false) restrictions.push('SUPPORT TICKETS DISABLED');
+          if (controls.dataExportEnabled === false) restrictions.push('DATA EXPORT DISABLED');
+          if (controls.notificationsEnabled === false) restrictions.push('NOTIFICATIONS DISABLED');
+          if (controls.apiAccessEnabled === false) restrictions.push('API ACCESS DISABLED');
           
           if (restrictions.length === 0) {
             addToHistory('No active restrictions.');
