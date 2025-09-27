@@ -14,7 +14,13 @@ import {
   Lock,
   Unlock,
   Server,
-  Globe
+  Globe,
+  MessageSquareOff,
+  CreditCardOff,
+  UserX,
+  Users,
+  Eye,
+  Ban
 } from 'lucide-react';
 
 const GovernorSystemControlsPage = () => {
@@ -72,6 +78,13 @@ const GovernorSystemControlsPage = () => {
         }
       }
       
+      // Update system controls
+      await FirestoreService.updateSystemControls(
+        systemSettings.systemControls,
+        user.id,
+        user.name
+      );
+      
       setLastSaved(new Date());
       await loadSystemSettings();
     } catch (error) {
@@ -85,6 +98,18 @@ const GovernorSystemControlsPage = () => {
   const updateSetting = (field: keyof SystemSettings, value: any) => {
     if (systemSettings) {
       setSystemSettings(prev => prev ? { ...prev, [field]: value } : null);
+    }
+  };
+
+  const updateSystemControl = (field: keyof SystemSettings['systemControls'], value: any) => {
+    if (systemSettings) {
+      setSystemSettings(prev => prev ? {
+        ...prev,
+        systemControls: {
+          ...prev.systemControls,
+          [field]: value
+        }
+      } : null);
     }
   };
 

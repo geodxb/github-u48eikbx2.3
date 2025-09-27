@@ -197,6 +197,16 @@ export interface AuditLog {
 export interface SystemSettings {
   maintenanceMode: boolean;
   maintenanceMessage: string;
+  systemControls: {
+    withdrawalsEnabled: boolean;
+    messagingEnabled: boolean;
+    profileUpdatesEnabled: boolean;
+    loginEnabled: boolean;
+    restrictedMode: boolean;
+    allowedPages: string[];
+    restrictionReason: string;
+    restrictionLevel: 'none' | 'partial' | 'full';
+  };
   minWithdrawal: number;
   maxWithdrawal: number;
   commissionRate: number;
