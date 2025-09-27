@@ -5,7 +5,7 @@ import MessageThread from '../../components/messaging/MessageThread';
 import { MessageService } from '../../services/messageService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useInvestors } from '../../hooks/useFirestore';
-import { MessageSquare, Send, Users, Shield, Building, TriangleAlert as AlertTriangle, DollarSign, User } from 'lucide-react';
+import { MessageSquare, Send, Users, Shield, Building, AlertTriangle, DollarSign, User } from 'lucide-react';
 
 const MessagesPage = () => {
   const { user, setGlobalLoading } = useAuth();
@@ -142,6 +142,10 @@ const MessagesPage = () => {
 
   return (
     <DashboardLayout title="Messages">      
+      <FunctionalityGuard 
+        functionality="messaging"
+        fallbackMessage="Messaging system has been temporarily disabled by the Governor for security reasons."
+      >
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-[calc(100vh-120px)] flex">
         {/* Conversation List */}
         <ConversationList
