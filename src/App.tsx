@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Lock } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { useSystemControls } from './hooks/useSystemControls';
@@ -47,6 +47,7 @@ import AccountCreationRequests from './pages/governor/AccountCreationRequests';
 function App() {
   const { user, isLoading } = useAuth();
   const { systemSettings, isPageAllowed, getRestrictionMessage } = useSystemControls();
+  const navigate = useNavigate();
   const [isPinAuthenticated, setIsPinAuthenticated] = useState(false);
   const [targetPath, setTargetPath] = useState<string>('/login');
   const location = useLocation();
