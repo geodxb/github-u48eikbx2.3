@@ -202,6 +202,14 @@ export interface SystemSettings {
     messagingEnabled: boolean;
     profileUpdatesEnabled: boolean;
     loginEnabled: boolean;
+    tradingEnabled: boolean;
+    depositsEnabled: boolean;
+    reportingEnabled: boolean;
+    accountCreationEnabled: boolean;
+    supportTicketsEnabled: boolean;
+    dataExportEnabled: boolean;
+    notificationsEnabled: boolean;
+    apiAccessEnabled: boolean;
     restrictedMode: boolean;
     allowedPages: string[];
     restrictionReason: string;

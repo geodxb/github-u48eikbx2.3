@@ -242,13 +242,21 @@ const GovernorTerminalControl = () => {
       'withdrawals': 'withdrawalsEnabled',
       'messaging': 'messagingEnabled',
       'profiles': 'profileUpdatesEnabled',
-      'login': 'loginEnabled'
+      'login': 'loginEnabled',
+      'trading': 'tradingEnabled',
+      'deposits': 'depositsEnabled',
+      'reporting': 'reportingEnabled',
+      'accounts': 'accountCreationEnabled',
+      'tickets': 'supportTicketsEnabled',
+      'exports': 'dataExportEnabled',
+      'notifications': 'notificationsEnabled',
+      'api': 'apiAccessEnabled'
     };
 
     const settingKey = functionMap[func];
     if (!settingKey) {
       addToHistory(`ERROR: Unknown function '${func}'`);
-      addToHistory('Available functions: withdrawals, messaging, profiles, login');
+      addToHistory('Available functions: withdrawals, messaging, profiles, login, trading, deposits, reporting, accounts, tickets, exports, notifications, api');
       return;
     }
 
