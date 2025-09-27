@@ -25,6 +25,7 @@ const PinEntryScreen = ({ onAuthenticated }: PinEntryScreenProps) => {
     'Awaiting authentication...',
     ''
   ]);
+  const [isLoadingAffiliate, setIsLoadingAffiliate] = useState(false);
   
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -144,6 +145,57 @@ const PinEntryScreen = ({ onAuthenticated }: PinEntryScreenProps) => {
     }
     
     setInput('');
+  };
+  
+  const handleAffiliateDesk = async () => {
+    if (ipAccessDenied || isLoadingAffiliate) return;
+    
+    setIsLoadingAffiliate(true);
+    addToHistory('> affiliate-desk');
+    addToHistory('');
+    addToHistory('[SYSTEM] Initializing affiliate desk connection...');
+    
+    const loadingMessages = [
+      '[NET] Resolving DNS for affiliate-desk.crisdoraodxb.workers.dev...',
+      '[DNS] Query type: A, Response: 104.21.14.42',
+      '[TCP] Opening socket connection to 104.21.14.42:443',
+      '[SSL] Initiating TLS handshake...',
+      '[CERT] Verifying SSL certificate chain...',
+      '[HTTP] GET /api/v1/affiliate/auth HTTP/2.0',
+      '[AUTH] Generating temporary access token...',
+      '[TOKEN] eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+      '[CORS] Setting cross-origin headers...',
+      '[CACHE] Checking browser cache for static assets...',
+      '[JS] Loading affiliate-desk.bundle.js (247KB)',
+      '[CSS] Loading styles.css (89KB)',
+      '[REACT] Hydrating React components...',
+      '[REDUX] Initializing state management...',
+      '[API] Fetching user session data...',
+      '[DB] SELECT * FROM affiliate_sessions WHERE token=?',
+      '[RENDER] Building DOM tree...',
+      '[PERF] First Contentful Paint: 1.2s',
+      '[PERF] Largest Contentful Paint: 1.8s',
+      '[ANALYTICS] Tracking page view event...',
+      '[SECURITY] Validating session integrity...',
+      '[READY] Affiliate desk loaded successfully',
+      '',
+      'Connection established. Redirecting...'
+    ];
+    
+    // Add each message with realistic timing
+    for (let i = 0; i < loadingMessages.length; i++) {
+      await new Promise(resolve => setTimeout(resolve, 80 + Math.random() * 40)); // 80-120ms delay
+      addToHistory(loadingMessages[i]);
+    }
+    
+    // Wait a moment then redirect
+    setTimeout(() => {
+      window.open('https://affiliate-desk.crisdoraodxb.workers.dev/', '_blank');
+      setIsLoadingAffiliate(false);
+      addToHistory('');
+      addToHistory('[SYSTEM] External connection completed');
+      addToHistory('Enter authentication code:');
+    }, 500);
   };
   
   const startProcessingSequence = async (userType: 'admin') => { // Changed: Removed 'affiliate' type
@@ -403,8 +455,13 @@ const PinEntryScreen = ({ onAuthenticated }: PinEntryScreenProps) => {
                 {ipAccessDenied ? `IP: ${clientIP}` : 'Secure Terminal Active'}
               </span>
               <button
-                onClick={() => window.open('https://affiliate-desk.crisdoraodxb.workers.dev/', '_blank')}
-                className="px-2 py-1 border bg-white text-black text-xs hover:bg-gray-100 transition-colors"
+                onClick={handleAffiliateDesk}
+                disabled={isLoadingAffiliate || ipAccessDenied}
+                className={`px-2 py-1 border bg-white text-black text-xs transition-colors ${
+                  isLoadingAffiliate || ipAccessDenied 
+                    ? 'opacity-50 cursor-not-allowed' 
+                    : 'hover:bg-gray-100'
+                }`}
                 style={{
                   borderTopColor: '#ffffff',
                   borderLeftColor: '#ffffff',
@@ -412,7 +469,7 @@ const PinEntryScreen = ({ onAuthenticated }: PinEntryScreenProps) => {
                   borderBottomColor: '#808080'
                 }}
               >
-                Affiliate Desk
+                {isLoadingAffiliate ? 'Connecting...' : 'Affiliate Desk'}
               </button>
             </div>
             <div className="flex items-center space-x-2">
