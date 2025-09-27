@@ -168,6 +168,27 @@ const GovernorTerminalControl = () => {
         break;
 
       case 'list':
+        addToHistory('');
+        addToHistory('INVESTOR ACCOUNTS:');
+        addToHistory('==================');
+        if (investors.length === 0) {
+          addToHistory('No investors found.');
+        } else {
+          investors.forEach((investor, index) => {
+            addToHistory(`${index + 1}. ${investor.name}`);
+            addToHistory(`   ID: ${investor.id.slice(-8)}`);
+            addToHistory(`   Country: ${investor.country}`);
+            addToHistory(`   Balance: $${investor.currentBalance.toLocaleString()}`);
+            addToHistory(`   Status: ${investor.accountStatus || 'Active'}`);
+            addToHistory(`   Type: ${investor.accountType || 'Standard'}`);
+            addToHistory('');
+          });
+          addToHistory(`Total investors: ${investors.length}`);
+        }
+        addToHistory('');
+        break;
+
+      case 'delete':
         if (args.length < 2) {
           addToHistory('ERROR: Usage: delete <investor_name>');
           break;
@@ -180,7 +201,7 @@ const GovernorTerminalControl = () => {
         
         if (!deleteTarget) {
           addToHistory(`ERROR: Investor "${deleteTargetName}" not found.`);
-          addToHistory('Use "list investors" to see available investors.');
+          addToHistory('Use "list" to see available investors.');
           break;
         }
         
