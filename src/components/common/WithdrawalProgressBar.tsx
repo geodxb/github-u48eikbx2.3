@@ -782,17 +782,6 @@ const WithdrawalProgressBar = ({
                         <p className="text-red-700 text-sm">
                           <strong>Governor Comment:</strong> {priorityRequest.reviewComment}
                         </p>
-                       )}
-                     </div>
-                   </>
-                 ) : null}
-               </div>
-             </div>
-           </div>
-         )}
-
-        {/* MT103 Document Section - Only for credited bank withdrawals */}
-        <MT103GeneratorDisplay />
                       )}
                     </div>
                   </>
@@ -803,12 +792,7 @@ const WithdrawalProgressBar = ({
         )}
 
         {/* MT103 Document Section - Only for credited bank withdrawals */}
-        {!isCryptoWithdrawal && currentStatus.toLowerCase() === 'credited' && investor && (
-          <MT103GeneratorDisplay 
-            withdrawalRequest={withdrawalRequest}
-            investor={investor}
-          />
-        )}
+        <MT103GeneratorDisplay />
 
         {/* Timeline Stages */}
         <div className="mt-6">
@@ -1197,14 +1181,6 @@ const WithdrawalProgressBar = ({
             </div>
           )}
         </div>
-
-        {/* MT103 Document Section - Only for credited bank withdrawals */}
-        {!isCryptoWithdrawal && currentStatus.toLowerCase() === 'credited' && investor && (
-          <MT103GeneratorDisplay 
-            withdrawalRequest={withdrawalRequest}
-            investor={investor}
-          />
-        )}
       </div>
     </div>
   );

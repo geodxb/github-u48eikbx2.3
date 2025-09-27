@@ -508,14 +508,13 @@ const WithdrawalsPage = () => {
                     rejectionReason={selectedProgressRequest.reason}
                     withdrawalRequest={selectedProgressRequest}
                     investor={getInvestorDetails(selectedProgressRequest.investorId)}
-                    priorityFlags={[]} // TODO: Load actual priority flags
+                    priorityFlags={priorityFlags.filter(flag => flag.withdrawalId === selectedProgressRequest.id)}
                     onPriorityRequest={selectedProgressRequest.status === 'Pending' || selectedProgressRequest.status === 'Approved' ? () => {
                       setShowProgressModal(false);
                       setSelectedPriorityWithdrawal(selectedProgressRequest);
                       setShowPriorityRequestModal(true);
                     } : undefined}
                     showPriorityButton={true}
-                    investor={getInvestorDetails(selectedProgressRequest.investorId)}
                   />
                 </div>
               </div>

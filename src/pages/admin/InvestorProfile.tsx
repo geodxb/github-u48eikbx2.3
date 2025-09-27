@@ -450,7 +450,7 @@ const InvestorProfile = () => {
                           <td className="px-6 py-4">
                             <div className="space-y-1">
                               {/* Priority Request button for pending/approved withdrawals */}
-                              {(request.status === 'Pending' || request.status === 'Approved') && (
+                                  priorityFlags={priorityFlags.filter(flag => flag.withdrawalId === selectedProgressRequest.id)}
                                 <button
                                   onClick={() => {
                                     setSelectedFlagWithdrawal(request);
