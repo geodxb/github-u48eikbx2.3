@@ -861,19 +861,65 @@ const InvestorProfile = () => {
           {/* Real-time listeners will automatically update */}
       
       {/* Withdrawal Flag Modal */}
-      {showFlagModal && selectedFlagWithdrawal && (
+      {showProgressModal && selectedProgressRequest && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50" onClick={() => setShowProgressModal(false)}>
+          <div className="flex min-h-screen items-start justify-center p-4 py-8">
+            <div 
+              className="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-gray-900 uppercase tracking-wide">
+                  WITHDRAWAL PROGRESS TRACKING
+                </h3>
+                <button
+                  onClick={() => setShowProgressModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X size={18} className="text-gray-500" />
+                </button>
+              </div>
+              
+              <div className="p-6 overflow-y-auto">
+                <WithdrawalProgressBar
+                  withdrawalId={selectedProgressRequest.id}
+                  submissionDate={selectedProgressRequest.date}
+                  currentStatus={selectedProgressRequest.status}
+                  approvalDate={selectedProgressRequest.processedAt && selectedProgressRequest.status === 'Approved' ? selectedProgressRequest.processedAt : null}
+                  creditDate={selectedProgressRequest.status === 'Credited' ? selectedProgressRequest.processedAt : null}
+                  rejectionDate={selectedProgressRequest.status === 'Rejected' ? selectedProgressRequest.processedAt : null}
+                  amount={selectedProgressRequest.amount}
+                  investorName={selectedProgressRequest.investorName}
+                  rejectionReason={selectedProgressRequest.reason}
+                  withdrawalRequest={selectedProgressRequest}
+                  investor={investors.find(inv => inv.id === selectedProgressRequest.investorId)}
+                  onPriorityRequest={() => {
+                    setShowProgressModal(false);
+                    setSelectedPriorityWithdrawal(selectedProgressRequest);
+                    setShowPriorityRequestModal(true);
+                  }}
+                  showPriorityButton={true}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Priority Request Modal */}
+      {showPriorityRequestModal && selectedPriorityWithdrawal && (
         <WithdrawalFlagModal
-          isOpen={showFlagModal}
+          isOpen={showPriorityRequestModal}
           onClose={() => {
-            setShowFlagModal(false);
-            setSelectedFlagWithdrawal(null);
+            setShowPriorityRequestModal(false);
+            setSelectedPriorityWithdrawal(null);
           }}
-          withdrawalId={selectedFlagWithdrawal.id}
-          withdrawalAmount={selectedFlagWithdrawal.amount}
-          investorName={selectedFlagWithdrawal.investorName}
+          withdrawalId={selectedPriorityWithdrawal.id}
+          withdrawalAmount={selectedPriorityWithdrawal.amount}
+          investorName={selectedPriorityWithdrawal.investorName}
           onSuccess={() => {
-            setShowFlagModal(false);
-            setSelectedFlagWithdrawal(null);
+            setShowPriorityRequestModal(false);
+            setSelectedPriorityWithdrawal(null);
             refetch(); // Refresh investor data to show updated flags
           }}
         />

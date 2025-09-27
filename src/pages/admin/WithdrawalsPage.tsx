@@ -507,6 +507,7 @@ const WithdrawalsPage = () => {
                     investorName={selectedProgressRequest.investorName}
                     rejectionReason={selectedProgressRequest.reason}
                     withdrawalRequest={selectedProgressRequest}
+                    investor={getInvestorDetails(selectedProgressRequest.investorId)}
                     onPriorityRequest={() => {
                       setShowProgressModal(false);
                       setSelectedPriorityWithdrawal(selectedProgressRequest);
