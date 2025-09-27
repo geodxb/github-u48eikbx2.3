@@ -3,15 +3,7 @@ import Modal from '../common/Modal';
 import Button from '../common/Button';
 import { WithdrawalFlagService } from '../../services/withdrawalFlagService';
 import { useAuth } from '../../contexts/AuthContext';
-import { 
-  Flag, 
-  AlertTriangle, 
-  Eye, 
-  FileText, 
-  Shield,
-  Clock,
-  CheckCircle
-} from 'lucide-react';
+import { Flag, TriangleAlert as AlertTriangle, Eye, FileText, Shield, Clock, CircleCheck as CheckCircle } from 'lucide-react';
 
 interface WithdrawalFlagModalProps {
   isOpen: boolean;
