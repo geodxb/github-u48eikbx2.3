@@ -127,7 +127,6 @@ export class AnnouncementService {
       const announcementsQuery = query(
         collection(db, 'announcements'),
         where('isActive', '==', true),
-        orderBy('priority', 'desc'),
         orderBy('createdAt', 'desc')
       );
       
@@ -156,6 +155,17 @@ export class AnnouncementService {
                              (!announcement.endDate || announcement.endDate >= now);
         
         return isTargetRole && isInDateRange;
+      }).sort((a, b) => {
+        // Sort by priority first, then by creation date
+        const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
+        const aPriority = priorityOrder[a.priority] || 1;
+        const bPriority = priorityOrder[b.priority] || 1;
+        
+        if (aPriority !== bPriority) {
+          return bPriority - aPriority; // Higher priority first
+        }
+        
+        return b.createdAt.getTime() - a.createdAt.getTime(); // Newer first
       });
       
       console.log(`✅ Retrieved ${filteredAnnouncements.length} active announcements for ${userRole}`);
@@ -202,6 +212,17 @@ export class AnnouncementService {
           const isInDateRange = (!announcement.startDate || announcement.startDate <= now) &&
                                (!announcement.endDate || announcement.endDate >= now);
           return isTargetRole && isInDateRange;
+        }).sort((a, b) => {
+          // Sort by priority first, then by creation date
+          const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
+          const aPriority = priorityOrder[a.priority] || 1;
+          const bPriority = priorityOrder[b.priority] || 1;
+          
+          if (aPriority !== bPriority) {
+            return bPriority - aPriority; // Higher priority first
+          }
+          
+          return b.createdAt.getTime() - a.createdAt.getTime(); // Newer first
         });
         
         callback(filteredAnnouncements);

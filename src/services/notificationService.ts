@@ -22,7 +22,7 @@ export class NotificationService {
     title: string,
     message: string,
     userId: string,
-    userRole: 'admin' | 'governor', // Removed 'investor'
+    userRole: 'admin' | 'governor' | 'investor', // Fixed: Re-added 'investor'
     priority: PushNotification['priority'] = 'medium',
     data?: PushNotification['data'],
     actionUrl?: string,
@@ -131,7 +131,7 @@ export class NotificationService {
     senderId: string,
     senderName: string,
     recipientId: string,
-    recipientRole: 'admin' | 'governor', // Changed 'investor' to 'investor'
+    recipientRole: 'admin' | 'governor' | 'investor', // Fixed: Re-added 'investor'
     messageContent: string,
     conversationId: string,
     department?: string
@@ -155,7 +155,7 @@ export class NotificationService {
           department: department || null
         },
         recipientRole === 'governor' ? '/governor/messages' : 
-        recipientRole === 'admin' ? '/admin/messages' : '/login' // Changed '/investor' to '/login'
+        recipientRole === 'admin' ? '/admin/messages' : '/investor/messages' // Fixed: Restored investor route
       );
     } catch (error) {
       console.error('❌ Error creating message notification:', error);

@@ -7,7 +7,7 @@ export interface PushNotification {
   read: boolean;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   userId: string;
-  userRole: 'admin' | 'governor'; // Changed: Removed 'investor'
+  userRole: 'admin' | 'governor' | 'investor'; // Fixed: Re-added 'investor' for announcements
   data?: {
     messageId?: string;
     withdrawalId?: string;

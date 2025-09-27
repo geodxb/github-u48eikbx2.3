@@ -35,7 +35,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const { user, logout, setGlobalLoading } = useAuth();
-  const { announcements } = useAnnouncements(user?.role || 'investor');
+  const { announcements } = useAnnouncements(user?.role || null);
   const navigate = useNavigate();
   const location = useLocation();
 

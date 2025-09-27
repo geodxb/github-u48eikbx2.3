@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { AnnouncementService, Announcement } from '../services/announcementService';
 
-export const useAnnouncements = (userRole: 'admin' | 'investor' | 'governor') => {
+export const useAnnouncements = (userRole: 'admin' | 'investor' | 'governor' | null) => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!userRole) {
+    if (!userRole || (userRole !== 'admin' && userRole !== 'investor' && userRole !== 'governor')) {
       setLoading(false);
       return;
     }
