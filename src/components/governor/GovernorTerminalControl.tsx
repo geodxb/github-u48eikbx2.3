@@ -709,7 +709,6 @@ const GovernorTerminalControl = () => {
                     borderRightColor: '#800000',
                     borderBottomColor: '#800000'
                   }}
-                   targetInvestor.name,
                 >
                   EMERGENCY SHUTDOWN
                 </button>
