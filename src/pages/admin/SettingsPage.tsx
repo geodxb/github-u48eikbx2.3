@@ -4,7 +4,22 @@ import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import { useAuth } from '../../contexts/AuthContext';
 import FunctionalityGuard from '../../components/common/FunctionalityGuard';
-import { User, Bell, Shield, Database, Mail, Globe, DollarSign, Clock, Save, RefreshCw, Building, Lock, TriangleAlert as AlertTriangle, Info } from 'lucide-react';
+import { 
+  User, 
+  Bell, 
+  Shield, 
+  Database, 
+  Mail, 
+  Globe, 
+  DollarSign,
+  Clock,
+  Save,
+  RefreshCw,
+  Building,
+  Lock,
+  AlertTriangle,
+  Info
+} from 'lucide-react';
 
 const SettingsPage = () => {
   const { user, setGlobalLoading } = useAuth();
@@ -412,60 +427,65 @@ const SettingsPage = () => {
 
   return (
     <DashboardLayout title="Settings">
-      <div className="mb-6">
-        <div className="bg-white rounded-lg border border-gray-300 shadow-sm p-6">
-          <h2 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">ADMIN SETTINGS</h2>
-          <p className="text-gray-600 uppercase tracking-wide text-sm">Manage your account and platform configuration</p>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Sidebar Navigation */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg border border-gray-300 shadow-sm p-0">
-            <nav className="space-y-1">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center px-4 py-3 text-left transition-colors font-medium uppercase tracking-wide ${
-                    activeTab === tab.id
-                      ? 'bg-gray-100 text-gray-900 border-r-2 border-gray-900'
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  <span className="mr-3">{tab.icon}</span>
-                  {tab.label}
-                  {tab.id === 'platform' && (
-                    <Lock size={14} className="ml-auto text-gray-400" />
-                  )}
-                </button>
-              ))}
-            </nav>
+      <FunctionalityGuard 
+        functionality="profileUpdates"
+        fallbackMessage="Settings and profile updates have been temporarily disabled by the Governor for security reasons."
+      >
+        <div className="mb-6">
+          <div className="bg-white rounded-lg border border-gray-300 shadow-sm p-6">
+            <h2 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">ADMIN SETTINGS</h2>
+            <p className="text-gray-600 uppercase tracking-wide text-sm">Manage your account and platform configuration</p>
           </div>
         </div>
         
-        {/* Main Content */}
-        <div className="lg:col-span-3">
-          {renderTabContent()}
-          
-          {/* Save Button - Only show for editable sections */}
-          {activeTab !== 'platform' && (
-            <div className="mt-6 flex justify-end space-x-4">
-              <button className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors rounded-lg uppercase tracking-wide">
-                RESET
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={isLoading}
-                className="px-4 py-2 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg uppercase tracking-wide disabled:opacity-50"
-              >
-                {isSaved ? 'SAVED!' : 'SAVE CHANGES'}
-              </button>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Sidebar Navigation */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg border border-gray-300 shadow-sm p-0">
+              <nav className="space-y-1">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full flex items-center px-4 py-3 text-left transition-colors font-medium uppercase tracking-wide ${
+                      activeTab === tab.id
+                        ? 'bg-gray-100 text-gray-900 border-r-2 border-gray-900'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="mr-3">{tab.icon}</span>
+                    {tab.label}
+                    {tab.id === 'platform' && (
+                      <Lock size={14} className="ml-auto text-gray-400" />
+                    )}
+                  </button>
+                ))}
+              </nav>
             </div>
-          )}
+          </div>
+          
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            {renderTabContent()}
+            
+            {/* Save Button - Only show for editable sections */}
+            {activeTab !== 'platform' && (
+              <div className="mt-6 flex justify-end space-x-4">
+                <button className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors rounded-lg uppercase tracking-wide">
+                  RESET
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={isLoading}
+                  className="px-4 py-2 bg-gray-900 text-white font-medium hover:bg-gray-800 transition-colors rounded-lg uppercase tracking-wide disabled:opacity-50"
+                >
+                  {isSaved ? 'SAVED!' : 'SAVE CHANGES'}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </FunctionalityGuard>
     </DashboardLayout>
   );
 };
