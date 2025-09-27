@@ -196,7 +196,11 @@ const GovernorTerminalControl = ({ onClose }: GovernorTerminalControlProps) => {
         }, 1000);
         break;
       case 'clear':
-        setCommandHistory([
+        
+        // Navigate back to governor dashboard after a brief delay
+        setTimeout(() => {
+          window.location.href = '/governor';
+        }, 1500);
           'Interactive Brokers Governor Control Terminal v3.0.0',
           'Governor Control System ready.',
           '',
