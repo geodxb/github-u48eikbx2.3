@@ -218,19 +218,56 @@ const GovernorSystemControlsPage = () => {
       <div className="bg-white border border-gray-300 p-6 mb-8">
         <h3 className="text-lg font-bold text-gray-900 mb-4 uppercase tracking-wide">SYSTEM STATUS OVERVIEW</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {Object.entries(systemStatus).map(([key, status]) => (
+          {[
+            { 
+              key: 'platform', 
+              label: 'PLATFORM',
+              status: systemSettings?.maintenanceMode ? 'MAINTENANCE' : 'ONLINE',
+              description: systemSettings?.maintenanceMode ? 'MAINTENANCE' : 'ONLINE'
+            },
+            { 
+              key: 'database', 
+              label: 'DATABASE',
+              status: 'CONNECTED',
+              description: 'CONNECTED'
+            },
+            { 
+              key: 'api', 
+              label: 'API',
+              status: systemSettings?.systemControls?.apiAccessEnabled !== false ? 'OPERATIONAL' : 'DISABLED',
+              description: systemSettings?.systemControls?.apiAccessEnabled !== false ? 'OPERATIONAL' : 'DISABLED'
+            },
+            { 
+              key: 'security', 
+              label: 'SECURITY',
+              status: 'ACTIVE',
+              description: 'ACTIVE'
+            },
+            { 
+              key: 'backup', 
+              label: 'BACKUP',
+              status: 'RUNNING',
+              description: 'RUNNING'
+            },
+            { 
+              key: 'monitoring', 
+              label: 'MONITORING',
+              status: systemSettings?.systemControls?.notificationsEnabled !== false ? 'ACTIVE' : 'DISABLED',
+              description: systemSettings?.systemControls?.notificationsEnabled !== false ? 'ACTIVE' : 'DISABLED'
+            }
+          ].map(({ key, label, status, description }) => (
             <div key={key} className="bg-gray-50 p-4 border border-gray-200">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-gray-700 uppercase tracking-wide">{key}</span>
+                <span className="text-sm font-bold text-gray-700 uppercase tracking-wide">{label}</span>
                 <div className={`w-3 h-3 rounded-full ${
-                  status === 'ONLINE' || status === 'CONNECTED' || status === 'OPERATIONAL' || status === 'ACTIVE' || status === 'RUNNING' 
+                  status === 'ONLINE' || status === 'CONNECTED' || status === 'OPERATIONAL' || status === 'ACTIVE' || status === 'RUNNING'
                     ? 'bg-green-500' 
-                    : status === 'MAINTENANCE' || status === 'RESTARTING'
+                    : status === 'MAINTENANCE' || status === 'RESTARTING' || status === 'DISABLED'
                     ? 'bg-yellow-500 animate-pulse'
                     : 'bg-red-500'
                 }`}></div>
               </div>
-              <p className="text-xs text-gray-600 mt-1 uppercase tracking-wide">{status}</p>
+              <p className="text-xs text-gray-600 mt-1 uppercase tracking-wide">{description}</p>
             </div>
           ))}
         </div>
