@@ -68,7 +68,7 @@ const GovernorTerminalControl = () => {
     // Simulate processing delay
     await new Promise(resolve => setTimeout(resolve, 200));
     
-    switch (args[0]) { // Check the first word of the command
+    switch (cmd) {
       case 'help':
         addToHistory('');
         addToHistory('AVAILABLE COMMANDS:');
@@ -167,7 +167,7 @@ const GovernorTerminalControl = () => {
         addToHistory('');
         break;
 
-      case 'list': // This case will now be hit for "list investors"
+      case 'list':
         if (args[1] === 'investors') {
           addToHistory('');
           addToHistory('INVESTOR ACCOUNTS:');
@@ -185,7 +185,7 @@ const GovernorTerminalControl = () => {
           addToHistory('ERROR: Usage: list investors');
         }
         break;
-      
+
       case 'delete':
         if (args.length < 2) {
           addToHistory('ERROR: Usage: delete <investor_name>');
@@ -518,20 +518,20 @@ const GovernorTerminalControl = () => {
         break;
 
       default:
-        // These multi-word commands are handled by startsWith, so they remain in default
+        // Handle multi-word commands
         if (cmd.startsWith('restrict ')) {
           const restrictArgs = command.split(' ');
           if (restrictArgs.length < 2) {
             addToHistory('ERROR: Usage: restrict <level>');
             addToHistory('Available levels: none, partial, full');
-            return;
+            break;
           }
           
           const level = restrictArgs[1].toLowerCase();
           if (!['none', 'partial', 'full'].includes(level)) {
             addToHistory('ERROR: Invalid restriction level.');
             addToHistory('Available levels: none, partial, full');
-            return;
+            break;
           }
           
           addToHistory('');
