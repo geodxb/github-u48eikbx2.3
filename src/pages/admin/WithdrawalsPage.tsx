@@ -13,6 +13,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import WithdrawalProgressBar from '../../components/common/WithdrawalProgressBar';
 import { CircleCheck as CheckCircle, Circle as XCircle, ListFilter as Filter, Search, Calendar, DollarSign, User, Clock, TriangleAlert as AlertTriangle, X, FileText, Plus, Flag, Wallet, Send } from 'lucide-react';
 import FunctionalityGuard from '../../components/common/FunctionalityGuard';
+import { useAllWithdrawalFlags } from '../../hooks/useWithdrawalFlags';
 
 type FilterStatus = 'all' | 'pending' | 'approved' | 'rejected';
 
@@ -20,6 +21,7 @@ const WithdrawalsPage = () => {
   const { user, setGlobalLoading } = useAuth();
   const { withdrawalRequests, loading, error, refetch } = useWithdrawalRequests();
   const { investors } = useInvestors();
+  const { flags: priorityFlags } = useAllWithdrawalFlags();
   
   // State management
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
