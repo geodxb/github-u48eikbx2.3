@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NotificationBell from '../common/NotificationBell';
 import LanguageToggle from '../common/LanguageToggle';
 import AnnouncementBanner from '../common/AnnouncementBanner';
+import SystemRestrictionBanner from '../common/SystemRestrictionBanner';
 import { useAnnouncements } from '../../hooks/useAnnouncements';
 import { 
   Menu, 
