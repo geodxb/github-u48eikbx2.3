@@ -1194,40 +1194,78 @@ const GovernorTerminalControl = () => {
 
       {/* Move Balance Modal */}
       <Modal
-        isOpen={showMoveBalanceModal}
-        onClose={() => setShowMoveBalanceModal(false)}
-        title="Transfer Investor Balance to Admin Commission"
-      >
-        <div className="p-4">
-          <p className="text-gray-600 mb-4">
-            Select an investor to transfer their balance to admin commission.
-          </p>
-          <div className="space-y-2">
-            {investors.filter(inv => inv.currentBalance > 0).map(investor => (
-              <div key={investor.id} className="p-3 border rounded-lg">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-semibold">{investor.name}</p>
-                    <p className="text-sm text-gray-500">Balance: ${investor.currentBalance.toLocaleString()}</p>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div 
+            className="relative w-full max-w-2xl bg-white rounded-lg shadow-xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900 uppercase tracking-wide">
+                TRANSFER INVESTOR BALANCE TO ADMIN COMMISSION
+              </h3>
+              <button
+                onClick={() => setShowMoveBalanceModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <span className="text-gray-500 text-lg">×</span>
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-gray-600 mb-4 uppercase tracking-wide font-medium">
+                SELECT AN INVESTOR TO TRANSFER THEIR BALANCE TO ADMIN COMMISSION ACCOUNT.
+              </p>
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {investors.filter(inv => inv.currentBalance > 0).map(investor => (
+                  <div key={investor.id} className="p-4 border border-gray-300 rounded-lg bg-gray-50">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-bold text-gray-900 uppercase tracking-wide">{investor.name}</p>
+                        <p className="text-sm text-gray-600 uppercase tracking-wide">
+                          BALANCE: ${investor.currentBalance.toLocaleString()}
+                        </p>
+                        <p className="text-xs text-gray-500 uppercase tracking-wide">
+                          ID: {investor.id.slice(-8)} | {investor.country}
+                        </p>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          
+                          if (confirm(`TRANSFER BALANCE: ${investor.name}\n\nAmount: $${investor.currentBalance.toLocaleString()}\n\nThis will transfer the investor's balance to admin commission account. Continue?`)) {
+                            addToHistory('');
+                            addToHistory(`TRANSFERRING BALANCE FROM: ${investor.name}`);
+                            addToHistory(`Amount: $${investor.currentBalance.toLocaleString()}`);
+                            addToHistory('Processing transfer...');
+                            
+                            // Handle balance transfer logic here
+                            console.log('Transfer balance for:', investor.name);
+                            
+                            addToHistory('Balance transfer completed successfully.');
+                            addToHistory('');
+                            setShowMoveBalanceModal(false);
+                          }
+                        }}
+                        className="px-4 py-2 bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition-colors uppercase tracking-wide border border-red-700"
+                      >
+                        TRANSFER BALANCE
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Handle balance transfer logic here
-                      console.log('Transfer balance for:', investor.name);
-                      setShowMoveBalanceModal(false);
-                    }}
-                    className="px-3 py-1 bg-red-600 text-white rounded text-sm"
-                  >
-                    Transfer Balance
-                  </button>
-                </div>
+                ))}
               </div>
-            ))}
+              
+              {investors.filter(inv => inv.currentBalance > 0).length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 font-bold uppercase tracking-wide">
+                    NO INVESTORS WITH AVAILABLE BALANCE
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </Modal>
-    </div>
   );
 };
 
