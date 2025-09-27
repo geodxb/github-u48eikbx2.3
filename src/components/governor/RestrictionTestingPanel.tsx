@@ -392,38 +392,6 @@ const RestrictionTestingPanel = () => {
     </div>
   );
 
-  const quickToggleRestriction = async (
-    settingKey: keyof SystemSettings['systemControls'],
-    currentValue: boolean,
-    functionName: string
-  ) => {
-    if (!user || !systemSettings) return;
-
-    if (!confirm(`${currentValue ? 'DISABLE' : 'ENABLE'} ${functionName.toUpperCase()}?\n\nThis will immediately affect all investor users.`)) {
-      return;
-    }
-
-    try {
-      const updatedControls = {
-        ...systemSettings.systemControls,
-        [settingKey]: !currentValue
-      };
-
-      await FirestoreService.updateSystemControls(
-        updatedControls,
-        user.id,
-        user.name
-      );
-
-      // Re-run tests after change
-      setTimeout(() => {
-        runRestrictionTests();
-      }, 1000);
-    } catch (error) {
-      console.error(`Error toggling ${functionName}:`, error);
-      alert(`Failed to toggle ${functionName}. Please try again.`);
-    }
-  };
 };
 
 export default RestrictionTestingPanel;
