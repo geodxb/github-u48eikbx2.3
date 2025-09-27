@@ -3,13 +3,29 @@ import Card from '../common/Card';
 import Table from '../common/Table';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
-import FunctionalityGuard from '../common/FunctionalityGuard';
 import { useWithdrawalRequests, useInvestors } from '../../hooks/useFirestore';
 import { FirestoreService } from '../../services/firestoreService';
 import ProofOfFundsForm from '../../components/investor/ProofOfFundsForm';
 import ProofOfTransferGenerator from '../../components/admin/ProofOfTransferGenerator';
 import { useAuth } from '../../contexts/AuthContext';
-import WithdrawalProgressBar from '../../components/common/Withdrimport { CircleCheck as CheckCircle, Circle as XCircle, ListFilter as Filter, Search, Calendar, DollarSign, User, Clock, TriangleAlert as AlertTriangle, X, FileText, CreditCard as Edit3, MapPin, Phone, Mail, TrendingUp, Building, Wallet } from 'lucide-react'Mail,
+import WithdrawalProgressBar from '../../components/common/WithdrawalProgressBar';
+import { Investor } from '../../types/user';
+import { 
+  CheckCircle, 
+  XCircle, 
+  Filter, 
+  Search, 
+  Calendar,
+  DollarSign,
+  User,
+  Clock,
+  AlertTriangle,
+  X,
+  FileText,
+  Edit3,
+  MapPin,
+  Phone,
+  Mail,
   TrendingUp,
   Building,
   Wallet,
@@ -118,6 +134,10 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
 
           {/* Profile Form */}
           {isEditing ? (
+            <FunctionalityGuard 
+              functionality="profileUpdates"
+              fallbackMessage="Profile updates have been temporarily disabled by the Governor."
+            >
             <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 uppercase tracking-wide">
                 EDIT PROFILE INFORMATION
@@ -262,6 +282,7 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
                 </Button>
               </div>
             </div>
+            </FunctionalityGuard>
           ) : (
             /* Profile Display */
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
