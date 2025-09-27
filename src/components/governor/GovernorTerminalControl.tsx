@@ -1232,8 +1232,4 @@ const GovernorTerminalControl = () => {
     </div>
   );
 };
-                              onClick={(e) => {
-                                e.stopPropagation();
-
 export default GovernorTerminalControl;
-                              }}
