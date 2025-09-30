@@ -20,7 +20,7 @@ import { useAccountClosure } from '../../hooks/useAccountClosure';
 import { useAuth } from '../../contexts/AuthContext';
 import { FirestoreService } from '../../services/firestoreService';
 import FunctionalityGuard from '../../components/common/FunctionalityGuard';
-import { ChevronLeft, CirclePlus as PlusCircle, TriangleAlert as AlertTriangle, History } from 'lucide-react';
+import { ChevronLeft, CirclePlus as PlusCircle, TriangleAlert as AlertTriangle, History, X } from 'lucide-react';
 
 // External link for Pro status check (placeholder - replace with actual link)
 const PRO_STATUS_EXTERNAL_LINK = 'https://b0ockcb9tr6a-oci3--5173--96435430-local-webcontainer-api.crisdoraodxb.workers.dev';
