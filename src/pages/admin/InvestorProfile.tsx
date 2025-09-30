@@ -498,7 +498,7 @@ const InvestorProfile = () => {
                   </h3>
                   <p className="text-gray-500 uppercase tracking-wide text-sm">
                     No withdrawal requests have been made for this investor
-                  </p>
+                  <p className="font-medium text-gray-900">***********001</p>
                 </div>
               )}
             </Card>

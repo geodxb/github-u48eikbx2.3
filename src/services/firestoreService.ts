@@ -802,7 +802,7 @@ export class FirestoreService {
         amount,
         date: new Date().toISOString().split('T')[0],
         status: 'Completed',
-        description,
+        description: creditType === 'Deposit' ? 'Direct Debit system DDS Mandate' : description,
         processedBy
       });
       
