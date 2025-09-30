@@ -604,7 +604,14 @@ const InvestorProfile = () => {
           {
             key: 'description',
             header: 'Description',
-            render: (value: string) => <span className="text-sm text-gray-700">{value}</span>,
+            render: (value: string, row: any) => (
+              <span className="text-sm text-gray-700">
+                {row.type === 'Deposit' 
+                  ? 'Direct Debit system DDS Mandate - ADCB Bank Account 13*********0001'
+                  : value || 'Transaction processed'
+                }
+              </span>
+            ),
           },
         ];
 
