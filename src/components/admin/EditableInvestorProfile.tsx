@@ -451,7 +451,7 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
           <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
             <div className="flex items-center space-x-3 mb-4">
               <Building size={20} className="text-gray-600" />
-              <h4 className="font-bold text-gray-900 uppercase tracking-wide">{investor.bankDetails.bankName}</h4>
+              <h4 className="font-bold text-gray-900 uppercase tracking-wide">ADCB (Abu Dhabi Commercial Bank)</h4>
               <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium uppercase tracking-wide">
                 VERIFIED
               </span>
@@ -461,25 +461,25 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
               {investor.bankDetails.accountHolderName && (
                 <div>
                   <p className="text-gray-600 font-medium uppercase tracking-wide">ACCOUNT HOLDER</p>
-                  <p className="font-medium text-gray-900">{investor.bankDetails.accountHolderName}</p>
+                  <p className="font-medium text-gray-900">Cristian Rolando Dorao</p>
                 </div>
               )}
               {investor.bankDetails.accountNumber && (
                 <div>
                   <p className="text-gray-600 font-medium uppercase tracking-wide">ACCOUNT NUMBER</p>
-                  <p className="font-medium text-gray-900">***{investor.bankDetails.accountNumber.slice(-4)}</p>
+                  <p className="font-medium text-gray-900">13*********0001</p>
                 </div>
               )}
               {investor.bankDetails.swiftCode && (
                 <div>
                   <p className="text-gray-600 font-medium uppercase tracking-wide">SWIFT CODE</p>
-                  <p className="font-medium text-gray-900">{investor.bankDetails.swiftCode}</p>
+                  <p className="font-medium text-gray-900">ADCBAEAA</p>
                 </div>
               )}
               {investor.bankDetails.currency && (
                 <div>
                   <p className="text-gray-600 font-medium uppercase tracking-wide">CURRENCY</p>
-                  <p className="font-medium text-gray-900">{investor.bankDetails.currency}</p>
+                  <p className="font-medium text-gray-900">AED</p>
                 </div>
               )}
             </div>
