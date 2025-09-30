@@ -442,6 +442,20 @@ const InvestorProfile = () => {
                               {request.type || 'BANK'}
                             </span>
                           </td>
+                          <td className="px-6 py-4 text-center">
+                            <span className={`px-2 py-1 text-xs rounded-full font-medium uppercase tracking-wide ${
+                              request.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                              request.status === 'Approved' ? 'bg-green-100 text-green-800' :
+                              request.status === 'Credited' ? 'bg-blue-100 text-blue-800' :
+                              request.status === 'Rejected' ? 'bg-red-100 text-red-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {request.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="space-y-1">
+                              <div>
                                 {(request.status === 'Pending' || request.status === 'Approved') && (
                                   <button
                                     onClick={() => {
@@ -463,16 +477,10 @@ const InvestorProfile = () => {
                                     ADCB Bank: ***********001
                                   </p>
                                 )}
-                                {request.processedAt && (
-                                  <p className="text-xs text-gray-500">
-                                    Processed: {new Date(request.processedAt).toLocaleDateString()}
-                                  </p>
-                                )}
                               </div>
                               {request.reason && (
                                 <p className="text-xs text-gray-600">{request.reason}</p>
                               )}
-                            </div>
                               {request.processedAt && (
                                 <p className="text-xs text-gray-500">
                                   Processed: {new Date(request.processedAt).toLocaleDateString()}
@@ -496,7 +504,6 @@ const InvestorProfile = () => {
                   <p className="text-gray-500 uppercase tracking-wide text-sm">
                     No withdrawal requests have been made for this investor
                   </p>
-                  <p className="font-medium text-gray-900">***********001</p>
                 </div>
               )}
             </Card>
