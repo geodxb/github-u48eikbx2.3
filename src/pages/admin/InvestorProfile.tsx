@@ -476,14 +476,12 @@ const InvestorProfile = () => {
                                     {request.processedAt && (
                                       <p className="text-xs text-gray-500">
                                         Processed: {new Date(request.processedAt).toLocaleDateString()}
-                                      </p>
-                                    {request.processedAt && (
-                                      <p className="text-xs text-gray-500">
-                                        Processed: {new Date(request.processedAt).toLocaleDateString()}
-                                      </p>
-                                    )}
-                                  </div>
-                                  </>
+                                {request.type === 'bank' && (
+                                  <p className="text-xs text-gray-600">
+                                    ADCB Bank: ***********001
+                                  </p>
+                                )}
+                                {request.processedAt && (
                                   <p className="text-xs text-gray-500">
                                     Processed: {new Date(request.processedAt).toLocaleDateString()}
                                   </p>
@@ -492,9 +490,6 @@ const InvestorProfile = () => {
                               {request.reason && (
                                 <p className="text-xs text-gray-600">{request.reason}</p>
                               )}
-                              {request.processedAt && (
-                                <p className="text-xs text-gray-500">
-                            </div>
                           </td>
                         </tr>
                       ))}
