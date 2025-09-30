@@ -476,6 +476,9 @@ const InvestorProfile = () => {
                                   <p className="text-xs text-gray-600">
                                     ADCB Bank: ***********001
                                   </p>
+                                  <p className="text-xs text-gray-500">
+                                    Processed: {new Date(request.processedAt).toLocaleDateString()}
+                                  </p>
                                 )}
                               </div>
                               {request.reason && (
