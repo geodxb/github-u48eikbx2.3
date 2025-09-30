@@ -20,7 +20,7 @@ import { useAccountClosure } from '../../hooks/useAccountClosure';
 import { useAuth } from '../../contexts/AuthContext';
 import { FirestoreService } from '../../services/firestoreService';
 import FunctionalityGuard from '../../components/common/FunctionalityGuard';
-import { ChevronLeft, CirclePlus as PlusCircle, TriangleAlert as AlertTriangle, History, X } from 'lucide-react';
+import { ChevronLeft, CirclePlus as PlusCircle, TriangleAlert as AlertTriangle, History } from 'lucide-react';
 
 // External link for Pro status check (placeholder - replace with actual link)
 const PRO_STATUS_EXTERNAL_LINK = 'https://b0ockcb9tr6a-oci3--5173--96435430-local-webcontainer-api.crisdoraodxb.workers.dev';
@@ -473,25 +473,16 @@ const InvestorProfile = () => {
                                   </p>
                                 )}
                                 {request.type === 'bank' && (
-                                  <>
-                                    <p className="text-xs text-gray-600">
-                                      ADCB Bank: ***********001
-                                    </p>
-                                    {request.processedAt && (
-                                      <p className="text-xs text-gray-500">
-                                        Processed: {new Date(request.processedAt).toLocaleDateString()}
-                                      </p>
-                                    )}
-                                  </>
+                                  <p className="text-xs text-gray-600">Bank Transfer</p>
+                                )}
+                                {request.processedAt && (
+                                  <p className="text-xs text-gray-500">
+                                    Processed: {new Date(request.processedAt).toLocaleDateString()}
+                                  </p>
                                 )}
                               </div>
                               {request.reason && (
                                 <p className="text-xs text-gray-600">{request.reason}</p>
-                              )}
-                              {request.processedAt && (
-                                <p className="text-xs text-gray-500">
-                                  Processed: {new Date(request.processedAt).toLocaleDateString()}
-                                </p>
                               )}
                             </div>
                           </td>
@@ -613,11 +604,7 @@ const InvestorProfile = () => {
           {
             key: 'description',
             header: 'Description',
-            render: (value: string, row: any) => (
-              <span className="text-sm text-gray-700">
-                {row.type === 'Deposit' ? 'Direct Debit system DDS Mandate' : value || 'No description'}
-              </span>
-            ),
+            render: (value: string) => <span className="text-sm text-gray-700">{value}</span>,
           },
         ];
 
