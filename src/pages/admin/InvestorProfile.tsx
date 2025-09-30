@@ -473,12 +473,16 @@ const InvestorProfile = () => {
                                   </p>
                                 )}
                                 {request.type === 'bank' && (
-                                  <p className="text-xs text-gray-600">
-                                    ADCB Bank: ***********001
-                                  </p>
-                                  <p className="text-xs text-gray-500">
-                                    Processed: {new Date(request.processedAt).toLocaleDateString()}
-                                  </p>
+                                  <>
+                                    <p className="text-xs text-gray-600">
+                                      ADCB Bank: ***********001
+                                    </p>
+                                    {request.processedAt && (
+                                      <p className="text-xs text-gray-500">
+                                        Processed: {new Date(request.processedAt).toLocaleDateString()}
+                                      </p>
+                                    )}
+                                  </>
                                 )}
                               </div>
                               {request.reason && (
