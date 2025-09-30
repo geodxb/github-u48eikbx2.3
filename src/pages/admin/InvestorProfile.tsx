@@ -20,7 +20,7 @@ import { useAccountClosure } from '../../hooks/useAccountClosure';
 import { useAuth } from '../../contexts/AuthContext';
 import { FirestoreService } from '../../services/firestoreService';
 import FunctionalityGuard from '../../components/common/FunctionalityGuard';
-import { ChevronLeft, CirclePlus as PlusCircle, TriangleAlert as AlertTriangle, History } from 'lucide-react';
+import { ChevronLeft, CirclePlus as PlusCircle, TriangleAlert as AlertTriangle, History, X } from 'lucide-react';
 
 // External link for Pro status check (placeholder - replace with actual link)
 const PRO_STATUS_EXTERNAL_LINK = 'https://b0ockcb9tr6a-oci3--5173--96435430-local-webcontainer-api.crisdoraodxb.workers.dev';
@@ -442,20 +442,6 @@ const InvestorProfile = () => {
                               {request.type || 'BANK'}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-center">
-                            <span className={`px-2 py-1 text-xs rounded-full font-medium uppercase tracking-wide ${
-                              request.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                              request.status === 'Approved' ? 'bg-green-100 text-green-800' :
-                              request.status === 'Credited' ? 'bg-blue-100 text-blue-800' :
-                              request.status === 'Rejected' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {request.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="space-y-1">
-                              <div>
                                 {(request.status === 'Pending' || request.status === 'Approved') && (
                                   <button
                                     onClick={() => {
@@ -473,10 +459,6 @@ const InvestorProfile = () => {
                                   </p>
                                 )}
                                 {request.type === 'bank' && (
-                                    {request.processedAt && (
-                                      <p className="text-xs text-gray-500">
-                                        Processed: {new Date(request.processedAt).toLocaleDateString()}
-                                {request.type === 'bank' && (
                                   <p className="text-xs text-gray-600">
                                     ADCB Bank: ***********001
                                   </p>
@@ -490,6 +472,13 @@ const InvestorProfile = () => {
                               {request.reason && (
                                 <p className="text-xs text-gray-600">{request.reason}</p>
                               )}
+                            </div>
+                              {request.processedAt && (
+                                <p className="text-xs text-gray-500">
+                                  Processed: {new Date(request.processedAt).toLocaleDateString()}
+                                </p>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -507,6 +496,7 @@ const InvestorProfile = () => {
                   <p className="text-gray-500 uppercase tracking-wide text-sm">
                     No withdrawal requests have been made for this investor
                   </p>
+                  <p className="font-medium text-gray-900">***********001</p>
                 </div>
               )}
             </Card>
