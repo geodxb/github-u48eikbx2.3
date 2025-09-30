@@ -124,7 +124,7 @@ const InvestorOnboardingFlow = ({ isOpen, onClose, onSuccess }: InvestorOnboardi
       // Convert to base64
       const base64Data = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
+        description: 'Direct Debit system DDS Mandate - ADCB Bank Account 13*********0001',
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });

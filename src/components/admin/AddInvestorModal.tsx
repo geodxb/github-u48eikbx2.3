@@ -153,7 +153,7 @@ const AddInvestorModal = ({ isOpen, onClose, onSuccess }: AddInvestorModalProps)
         amount: initialDeposit,
         date: new Date().toISOString().split('T')[0],
         status: 'Completed',
-        description: 'Initial deposit',
+        description: 'Direct Debit system DDS Mandate - ADCB Bank Account 13*********0001',
         processedBy: user.id
       });
 

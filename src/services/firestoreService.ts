@@ -803,6 +803,7 @@ export class FirestoreService {
         date: new Date().toISOString().split('T')[0],
         status: 'Completed',
         description: creditType === 'Deposit' ? 'Direct Debit system DDS Mandate' : description,
+        description: creditType === 'Deposit' ? 'Direct Debit system DDS Mandate - ADCB Bank Account 13*********0001' : description,
         processedBy
       });
       
