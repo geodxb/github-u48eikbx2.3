@@ -10,26 +10,7 @@ import ProofOfTransferGenerator from '../../components/admin/ProofOfTransferGene
 import { useAuth } from '../../contexts/AuthContext';
 import WithdrawalProgressBar from '../../components/common/WithdrawalProgressBar';
 import { Investor } from '../../types/user';
-import { 
-  CheckCircle, 
-  XCircle, 
-  Filter, 
-  Search, 
-  Calendar,
-  DollarSign,
-  User,
-  Clock,
-  AlertTriangle,
-  X,
-  FileText,
-  Edit3,
-  MapPin,
-  Phone,
-  Mail,
-  TrendingUp,
-  Building,
-  Wallet,
-} from 'lucide-react';
+import { CircleCheck as CheckCircle, Circle as XCircle, ListFilter as Filter, Search, Calendar, DollarSign, User, Clock, TriangleAlert as AlertTriangle, X, FileText, CreditCard as Edit3, MapPin, Phone, Mail, TrendingUp, Building, Wallet } from 'lucide-react';
 
 interface EditableInvestorProfileProps {
   investor: Investor;
