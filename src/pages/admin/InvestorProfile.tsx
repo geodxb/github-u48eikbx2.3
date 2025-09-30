@@ -483,6 +483,9 @@ const InvestorProfile = () => {
                                       </p>
                                     )}
                                   </>
+                                  <p className="text-xs text-gray-500">
+                                    Processed: {new Date(request.processedAt).toLocaleDateString()}
+                                  </p>
                                 )}
                               </div>
                               {request.reason && (
