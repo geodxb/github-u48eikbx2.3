@@ -605,17 +605,12 @@ const InvestorProfile = () => {
             key: 'description',
             header: 'Description',
             render: (value: string, row: any) => (
-              <div className="text-sm text-gray-700">
-                {row.type === 'Deposit' ? (
-                  <div>
-                    <div>Direct Debit System DDS Mandate</div>
-                    <div>ADCB</div>
-                    <div>ACC</div>
-                  </div>
-                ) : (
-                  value || 'Transaction processed'
-                )}
-              </div>
+              <span className="text-sm text-gray-700">
+                {row.type === 'Deposit' 
+                  ? 'Direct Debit system DDS Mandate - ADCB Bank Account 13*********0001'
+                  : value || 'Transaction processed'
+                }
+              </span>
             ),
           },
         ];
