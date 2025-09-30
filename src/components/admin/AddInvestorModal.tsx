@@ -4,19 +4,7 @@ import Modal from '../common/Modal';
 import Button from '../common/Button';
 import { FirestoreService } from '../../services/firestoreService';
 import { useAuth } from '../../contexts/AuthContext';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  DollarSign,
-  CheckCircle,
-  AlertTriangle,
-  Upload,
-  FileText,
-  X,
-  Eye
-} from 'lucide-react';
+import { User, Mail, Phone, MapPin, DollarSign, CircleCheck as CheckCircle, TriangleAlert as AlertTriangle, Upload, FileText, X, Eye } from 'lucide-react';
 
 interface AddInvestorModalProps {
   isOpen: boolean;
