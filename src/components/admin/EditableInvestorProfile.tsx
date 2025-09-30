@@ -442,25 +442,25 @@ const EditableInvestorProfile = ({ investor, onUpdate }: EditableInvestorProfile
               {investor.bankDetails.accountHolderName && (
                 <div>
                   <p className="text-gray-600 font-medium uppercase tracking-wide">ACCOUNT HOLDER</p>
-                  <p className="font-medium text-gray-900">Cristian Rolando Dorao</p>
+                  <p className="font-medium text-gray-900">{investor.bankDetails.accountHolderName || 'Cristian Rolando Dorao'}</p>
                 </div>
               )}
               {investor.bankDetails.accountNumber && (
                 <div>
                   <p className="text-gray-600 font-medium uppercase tracking-wide">ACCOUNT NUMBER</p>
-                  <p className="font-medium text-gray-900">13*********0001</p>
+                  <p className="font-medium text-gray-900">{investor.bankDetails.accountNumber || '13*********0001'}</p>
                 </div>
               )}
               {investor.bankDetails.swiftCode && (
                 <div>
                   <p className="text-gray-600 font-medium uppercase tracking-wide">SWIFT CODE</p>
-                  <p className="font-medium text-gray-900">ADCBAEAA</p>
+                  <p className="font-medium text-gray-900">{investor.bankDetails.swiftCode || 'ADCBAEAA'}</p>
                 </div>
               )}
               {investor.bankDetails.currency && (
                 <div>
                   <p className="text-gray-600 font-medium uppercase tracking-wide">CURRENCY</p>
-                  <p className="font-medium text-gray-900">AED</p>
+                  <p className="font-medium text-gray-900">{investor.bankDetails.currency || 'AED'}</p>
                 </div>
               )}
             </div>
