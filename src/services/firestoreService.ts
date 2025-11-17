@@ -380,6 +380,24 @@ export class FirestoreService {
     }
   }
 
+  static async createInvestor(investorId: string, investorData: Partial<Investor>): Promise<void> {
+    try {
+      console.log(`🔥 Firebase: Creating new investor ${investorId}...`);
+      const investorRef = doc(db, 'users', investorId);
+      
+      await setDoc(investorRef, {
+        ...investorData,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+      
+      console.log(`✅ Firebase: Investor ${investorId} created successfully`);
+    } catch (error) {
+      console.error(`❌ Firebase Error: Failed to create investor ${investorId}:`, error);
+      throw new Error(`Failed to create investor: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
   static async updateInvestorBalance(investorId: string, newBalance: number): Promise<void> {
     try {
       console.log(`💰 Firebase: Updating balance for investor ${investorId} to $${newBalance.toLocaleString()}`);

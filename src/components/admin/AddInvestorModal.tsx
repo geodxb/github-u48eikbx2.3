@@ -132,7 +132,7 @@ const AddInvestorModal = ({ isOpen, onClose, onSuccess }: AddInvestorModalProps)
       };
 
       // Store in Firebase
-      await FirestoreService.updateInvestor(investorId, investorData);
+      await FirestoreService.createInvestor(investorId, investorData);
 
       // Add initial deposit transaction
       await FirestoreService.addTransaction({
