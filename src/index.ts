@@ -3,8 +3,8 @@ export default {
     const url = new URL(request.url);
     const pathname = url.pathname;
 
-    // ✅ ONLY RELIABLE IP SOURCE IN CLOUDFLARE
-    const clientIP = request.headers.get("CF-Connecting-IP") || "unknown";
+    const clientIP =
+      request.headers.get("CF-Connecting-IP") || "unknown";
 
     const authorizedIPs = new Set([
       "189.203.12.82",
@@ -21,12 +21,18 @@ export default {
 
     const isAuthorized = authorizedIPs.has(clientIP);
 
-    // OPTIONAL API PROTECTION
-    if (pathname.startsWith("/api/")) {
-      if (!isAuthorized) {
-        return new Response("ACCESS DENIED", { status: 403 });
-      }
+    // 🔥 REAL BLOCK (THIS IS WHAT YOU WERE MISSING)
+    if (!isAuthorized) {
+      return new Response("ACCESS DENIED", {
+        status: 403,
+        headers: {
+          "Content-Type": "text/plain",
+        },
+      });
+    }
 
+    // API proxy (optional)
+    if (pathname.startsWith("/api/")) {
       const backendURL = "https://YOUR_BACKEND_URL";
       const targetURL = new URL(pathname + url.search, backendURL);
 
@@ -40,21 +46,18 @@ export default {
       });
     }
 
-    // STATIC FILES
+    // SPA assets
     const assetResponse = await env.ASSETS.fetch(request);
 
     if (assetResponse.status !== 404) {
       return assetResponse;
     }
 
-    // SPA fallback
-    const indexResponse = await env.ASSETS.fetch(
+    return env.ASSETS.fetch(
       new Request(new URL("/index.html", request.url), {
         method: "GET",
       })
     );
-
-    return indexResponse;
   },
 };
 
